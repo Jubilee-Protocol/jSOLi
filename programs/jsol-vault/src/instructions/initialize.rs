@@ -39,7 +39,16 @@ pub fn handler(
     );
     
     let mut total_allocation: u16 = 0;
+    let mut seen_protocols: Vec<u8> = Vec::new();
+    
     for alloc in &allocations {
+        // HIGH-02 FIX: Check for duplicate protocols
+        require!(
+            !seen_protocols.contains(&alloc.protocol),
+            VaultError::DuplicateProtocol
+        );
+        seen_protocols.push(alloc.protocol);
+        
         require!(
             alloc.target_bps <= MAX_PROTOCOL_ALLOCATION_BPS,
             VaultError::AllocationExceedsMax
@@ -58,7 +67,7 @@ pub fn handler(
     let vault = &mut ctx.accounts.vault;
     vault.bump = ctx.bumps.vault;
     vault.authority = ctx.accounts.authority.key();
-    vault.jsol_mint = ctx.accounts.jsol_mint.key();
+    vault.jsoli_mint = ctx.accounts.jsoli_mint.key();
     vault.total_tvl = 0;
     vault.total_shares = 0;
     vault.high_water_mark = SHARE_PRECISION;
@@ -93,13 +102,13 @@ pub fn handler(
     // Emit initialization event
     emit!(VaultInitialized {
         authority: vault.authority,
-        jsol_mint: vault.jsol_mint,
+        jsoli_mint: vault.jsoli_mint,
         timestamp: Clock::get()?.unix_timestamp,
     });
     
     msg!("jSOL Vault initialized successfully");
     msg!("Authority: {}", vault.authority);
-    msg!("jSOL Mint: {}", vault.jsol_mint);
+    msg!("jSOL Mint: {}", vault.jsoli_mint);
     
     Ok(())
 }
@@ -125,16 +134,16 @@ pub struct Initialize<'info> {
     )]
     pub vault: Account<'info, VaultState>,
     
-    /// The jSOL token mint
+    /// The jSOLi token mint
     #[account(
         init,
         payer = authority,
         mint::decimals = 9,
         mint::authority = vault,
-        seeds = [JSOL_MINT_SEED],
+        seeds = [JSOLI_MINT_SEED],
         bump
     )]
-    pub jsol_mint: Account<'info, Mint>,
+    pub jsoli_mint: Account<'info, Mint>,
     
     /// Authority who initializes and controls the vault
     #[account(mut)]

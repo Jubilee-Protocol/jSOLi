@@ -113,8 +113,8 @@ pub struct VaultState {
     /// Authority that can perform admin operations
     pub authority: Pubkey,
     
-    /// jSOL token mint address
-    pub jsol_mint: Pubkey,
+    /// jSOLi token mint address
+    pub jsoli_mint: Pubkey,
     
     /// Total value locked in the vault (in lamports)
     pub total_tvl: u64,
@@ -161,7 +161,7 @@ impl VaultState {
     pub const LEN: usize = 8 + // Anchor discriminator
         1 +                    // bump
         32 +                   // authority
-        32 +                   // jsol_mint
+        32 +                   // jsoli_mint
         8 +                    // total_tvl
         8 +                    // total_shares
         8 +                    // high_water_mark
@@ -177,42 +177,56 @@ impl VaultState {
         128;                   // reserved
     
     /// Calculate the current share price (value per share in lamports)
-    pub fn share_price(&self) -> u64 {
+    /// Returns error on overflow instead of masking with unwrap_or
+    pub fn share_price(&self) -> Result<u64, anchor_lang::error::Error> {
+        use crate::errors::VaultError;
         if self.total_shares == 0 {
-            SHARE_PRECISION
+            Ok(SHARE_PRECISION)
         } else {
-            self.total_tvl
-                .checked_mul(SHARE_PRECISION)
-                .unwrap_or(0)
-                .checked_div(self.total_shares)
-                .unwrap_or(SHARE_PRECISION)
+            let result = (self.total_tvl as u128)
+                .checked_mul(SHARE_PRECISION as u128)
+                .ok_or(VaultError::MathOverflow)?
+                .checked_div(self.total_shares as u128)
+                .ok_or(VaultError::DivisionByZero)?;
+            Ok(result as u64)
         }
     }
     
     /// Calculate shares for a given deposit amount
-    pub fn calculate_shares(&self, deposit_lamports: u64) -> u64 {
+    /// Implements first-depositor protection by requiring minimum shares
+    pub fn calculate_shares(&self, deposit_lamports: u64) -> Result<u64, anchor_lang::error::Error> {
+        use crate::errors::VaultError;
+        use crate::constants::MINIMUM_INITIAL_SHARES;
+        
         if self.total_shares == 0 || self.total_tvl == 0 {
-            // First deposit: 1:1 share ratio
-            deposit_lamports
+            // First deposit: 1:1 share ratio minus dead shares
+            // Dead shares protect against first-depositor manipulation
+            if deposit_lamports <= MINIMUM_INITIAL_SHARES {
+                return Err(VaultError::DepositBelowMinimum.into());
+            }
+            Ok(deposit_lamports - MINIMUM_INITIAL_SHARES)
         } else {
-            deposit_lamports
-                .checked_mul(self.total_shares)
-                .unwrap_or(0)
-                .checked_div(self.total_tvl)
-                .unwrap_or(0)
+            let result = (deposit_lamports as u128)
+                .checked_mul(self.total_shares as u128)
+                .ok_or(VaultError::MathOverflow)?
+                .checked_div(self.total_tvl as u128)
+                .ok_or(VaultError::DivisionByZero)?;
+            Ok(result as u64)
         }
     }
     
     /// Calculate lamports value for a given share amount
-    pub fn calculate_lamports(&self, shares: u64) -> u64 {
+    pub fn calculate_lamports(&self, shares: u64) -> Result<u64, anchor_lang::error::Error> {
+        use crate::errors::VaultError;
         if self.total_shares == 0 {
-            0
+            Ok(0)
         } else {
-            shares
-                .checked_mul(self.total_tvl)
-                .unwrap_or(0)
-                .checked_div(self.total_shares)
-                .unwrap_or(0)
+            let result = (shares as u128)
+                .checked_mul(self.total_tvl as u128)
+                .ok_or(VaultError::MathOverflow)?
+                .checked_div(self.total_shares as u128)
+                .ok_or(VaultError::DivisionByZero)?;
+            Ok(result as u64)
         }
     }
 }
@@ -315,7 +329,7 @@ impl WithdrawRequest {
 #[event]
 pub struct VaultInitialized {
     pub authority: Pubkey,
-    pub jsol_mint: Pubkey,
+    pub jsoli_mint: Pubkey,
     pub timestamp: i64,
 }
 

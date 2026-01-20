@@ -7,7 +7,7 @@ use crate::constants::*;
 use crate::errors::VaultError;
 use crate::state::*;
 
-/// Deposit SOL into the vault and receive jSOL shares
+/// Deposit SOL into the vault and receive jSOLii shares
 /// 
 /// # Arguments
 /// * `ctx` - The context containing all accounts
@@ -33,12 +33,12 @@ pub fn handler(ctx: Context<Deposit>, amount: u64) -> Result<()> {
         );
     }
     
-    // Calculate shares to mint
-    let shares_to_mint = vault.calculate_shares(amount);
+    // Calculate shares to mint (now returns Result with first-depositor protection)
+    let shares_to_mint = vault.calculate_shares(amount)?;
     require!(shares_to_mint > 0, VaultError::ZeroAmount);
     
     // Record share price before deposit
-    let share_price = vault.share_price();
+    let share_price = vault.share_price()?;
     
     // Transfer SOL from user to vault
     let cpi_context = CpiContext::new(
@@ -50,14 +50,14 @@ pub fn handler(ctx: Context<Deposit>, amount: u64) -> Result<()> {
     );
     anchor_lang::system_program::transfer(cpi_context, amount)?;
     
-    // Mint jSOL shares to user
+    // Mint jSOLi shares to user
     let vault_seeds = &[VAULT_SEED, &[vault.bump]];
     let signer_seeds = &[&vault_seeds[..]];
     
     let mint_ctx = CpiContext::new_with_signer(
         ctx.accounts.token_program.to_account_info(),
         MintTo {
-            mint: ctx.accounts.jsol_mint.to_account_info(),
+            mint: ctx.accounts.jsoli_mint.to_account_info(),
             to: ctx.accounts.user_jsol_account.to_account_info(),
             authority: ctx.accounts.vault.to_account_info(),
         },
@@ -122,19 +122,19 @@ pub struct Deposit<'info> {
     )]
     pub vault: Account<'info, VaultState>,
     
-    /// The jSOL token mint
+    /// The jSOLi token mint
     #[account(
         mut,
-        seeds = [JSOL_MINT_SEED],
+        seeds = [JSOLI_MINT_SEED],
         bump
     )]
-    pub jsol_mint: Account<'info, Mint>,
+    pub jsoli_mint: Account<'info, Mint>,
     
-    /// User's jSOL token account
+    /// User's jSOLi token account
     #[account(
         init_if_needed,
         payer = user,
-        associated_token::mint = jsol_mint,
+        associated_token::mint = jsoli_mint,
         associated_token::authority = user
     )]
     pub user_jsol_account: Account<'info, TokenAccount>,

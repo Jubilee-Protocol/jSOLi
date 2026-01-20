@@ -1,4 +1,4 @@
-//! jSOL Vault - A Production-Grade Solana LST Aggregator
+//! jSOLi Vault - A Production-Grade Solana LST Aggregator
 //!
 //! This program implements an automated vault that aggregates deposits into
 //! various Liquid Staking Token (LST) protocols on Solana for optimized yield.
@@ -6,14 +6,14 @@
 //! ## Features
 //! - Aggregate SOL across multiple LST protocols (Jito, Marinade, BlazeStake, Lido)
 //! - Automated rebalancing based on APY optimization
-//! - Share-based accounting (jSOL token)
+//! - Share-based accounting (jSOLi token)
 //! - Management and performance fees
 //! - Emergency pause mechanism
 //! - Two-step withdrawal with unbonding period
 //!
 //! ## Architecture
 //! The vault uses PDAs for state management and the jSOL mint authority.
-//! Users deposit SOL and receive jSOL shares representing their position.
+//! Users deposit SOL and receive jSOLii shares representing their position.
 //! The vault automatically allocates deposits across configured protocols.
 
 use anchor_lang::prelude::*;
@@ -54,7 +54,7 @@ pub mod jsol_vault {
 
     /// Deposit SOL into the vault
     ///
-    /// Mints jSOL shares to the depositor based on current share price.
+    /// Mints jSOLi shares to the depositor based on current share price.
     ///
     /// # Arguments
     /// * `amount` - Amount of lamports to deposit
@@ -68,14 +68,14 @@ pub mod jsol_vault {
     /// the unstaking period has elapsed.
     ///
     /// # Arguments
-    /// * `shares` - Number of jSOL shares to withdraw
+    /// * `shares` - Number of jSOLi shares to withdraw
     pub fn request_withdraw(ctx: Context<RequestWithdraw>, shares: u64) -> Result<()> {
         withdraw::request_handler(ctx, shares)
     }
 
     /// Complete a pending withdrawal
     ///
-    /// Burns jSOL shares and transfers SOL to the user.
+    /// Burns jSOLi shares and transfers SOL to the user.
     /// Can only be called after the unbonding period.
     pub fn complete_withdraw(ctx: Context<CompleteWithdraw>) -> Result<()> {
         withdraw::complete_handler(ctx)

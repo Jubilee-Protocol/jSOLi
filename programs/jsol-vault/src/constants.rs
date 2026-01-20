@@ -1,4 +1,4 @@
-//! Program constants for the jSOL Vault
+//! Program constants for the jSOLi Vault
 //! 
 //! All fee values are in basis points (bps) where 10000 bps = 100%
 
@@ -12,7 +12,7 @@ use anchor_lang::prelude::*;
 pub const VAULT_SEED: &[u8] = b"vault";
 
 /// Seed for jSOL mint authority PDA
-pub const JSOL_MINT_SEED: &[u8] = b"jsol_mint";
+pub const JSOLI_MINT_SEED: &[u8] = b"jsoli_mint";
 
 /// Seed for user account PDA
 pub const USER_ACCOUNT_SEED: &[u8] = b"user";
@@ -58,6 +58,10 @@ pub const MAX_PROTOCOLS: usize = 10;
 
 /// Minimum deposit: 0.1 SOL (100,000,000 lamports)
 pub const MIN_DEPOSIT_LAMPORTS: u64 = 100_000_000;
+
+/// Minimum initial shares to burn on first deposit (prevents first-depositor attack)
+/// These shares are effectively "dead" and protect against share price manipulation
+pub const MINIMUM_INITIAL_SHARES: u64 = 1_000;
 
 /// Number of epochs for unstaking
 pub const UNSTAKING_EPOCHS: u8 = 1;

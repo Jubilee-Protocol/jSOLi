@@ -16,7 +16,7 @@ use crate::state::*;
 /// 
 /// # Arguments
 /// * `ctx` - The context containing all accounts
-/// * `shares` - Number of jSOL shares to withdraw
+/// * `shares` - Number of jSOLi shares to withdraw
 pub fn request_handler(ctx: Context<RequestWithdraw>, shares: u64) -> Result<()> {
     require!(shares > 0, VaultError::ZeroAmount);
     
@@ -30,7 +30,7 @@ pub fn request_handler(ctx: Context<RequestWithdraw>, shares: u64) -> Result<()>
     require!(user_account.shares >= shares, VaultError::InsufficientShares);
     
     // Calculate estimated lamports value
-    let estimated_lamports = vault.calculate_lamports(shares);
+    let estimated_lamports = vault.calculate_lamports(shares)?;
     
     // Get current timestamp and calculate ready time
     let clock = Clock::get()?;
@@ -110,7 +110,7 @@ pub fn complete_handler(ctx: Context<CompleteWithdraw>) -> Result<()> {
     );
     
     // Calculate actual lamports to return (recalculate in case share price changed)
-    let actual_lamports = vault.calculate_lamports(withdraw_request.shares);
+    let actual_lamports = vault.calculate_lamports(withdraw_request.shares)?;
     
     // Check vault has sufficient liquidity
     require!(
@@ -118,18 +118,14 @@ pub fn complete_handler(ctx: Context<CompleteWithdraw>) -> Result<()> {
         VaultError::InsufficientLiquidity
     );
     
-    // Burn jSOL tokens
-    let vault_seeds = &[VAULT_SEED, &[vault.bump]];
-    let signer_seeds = &[&vault_seeds[..]];
-    
-    let burn_ctx = CpiContext::new_with_signer(
+    // Burn jSOLi tokens - user is authority of their own token account
+    let burn_ctx = CpiContext::new(
         ctx.accounts.token_program.to_account_info(),
         Burn {
-            mint: ctx.accounts.jsol_mint.to_account_info(),
+            mint: ctx.accounts.jsoli_mint.to_account_info(),
             from: ctx.accounts.user_jsol_account.to_account_info(),
-            authority: ctx.accounts.vault.to_account_info(),
+            authority: ctx.accounts.user.to_account_info(),
         },
-        signer_seeds,
     );
     token::burn(burn_ctx, withdraw_request.shares)?;
     
@@ -223,18 +219,18 @@ pub struct CompleteWithdraw<'info> {
     )]
     pub vault: Account<'info, VaultState>,
     
-    /// The jSOL token mint
+    /// The jSOLi token mint
     #[account(
         mut,
-        seeds = [JSOL_MINT_SEED],
+        seeds = [JSOLI_MINT_SEED],
         bump
     )]
-    pub jsol_mint: Account<'info, Mint>,
+    pub jsoli_mint: Account<'info, Mint>,
     
-    /// User's jSOL token account
+    /// User's jSOLi token account
     #[account(
         mut,
-        associated_token::mint = jsol_mint,
+        associated_token::mint = jsoli_mint,
         associated_token::authority = user
     )]
     pub user_jsol_account: Account<'info, TokenAccount>,

@@ -67,13 +67,13 @@ jSOL aggregates user deposits across multiple Liquid Staking Token (LST) protoco
 ### Mainnet
 | Account | Address |
 |---------|---------|
-| jSOL Vault | `TBD` |
+| jSOLi Vault | `TBD` |
 | jSOL Mint | `TBD` |
 
 ### Devnet
 | Account | Address |
 |---------|---------|
-| jSOL Vault | `TBD` |
+| jSOLi Vault | `TBD` |
 | jSOL Mint | `TBD` |
 
 ---

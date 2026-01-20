@@ -155,7 +155,7 @@ pub fn collect_fees_handler(ctx: Context<CollectFees>) -> Result<()> {
         .ok_or(VaultError::DivisionByZero)? as u64;
     
     // Performance fee calculation (on gains above high water mark)
-    let current_share_price = vault.share_price();
+    let current_share_price = vault.share_price()?;
     let performance_fee = if current_share_price > vault.high_water_mark {
         let gain_per_share = current_share_price
             .checked_sub(vault.high_water_mark)
@@ -234,7 +234,16 @@ pub fn update_allocations_handler(
     );
     
     let mut total: u16 = 0;
+    let mut seen_protocols: Vec<u8> = Vec::new();
+    
     for alloc in &new_allocations {
+        // HIGH-02 FIX: Check for duplicate protocols
+        require!(
+            !seen_protocols.contains(&alloc.protocol),
+            VaultError::DuplicateProtocol
+        );
+        seen_protocols.push(alloc.protocol);
+        
         require!(
             alloc.target_bps <= MAX_PROTOCOL_ALLOCATION_BPS,
             VaultError::AllocationExceedsMax
@@ -313,9 +322,14 @@ pub struct CollectFees<'info> {
     )]
     pub vault_sol_account: UncheckedAccount<'info>,
     
-    /// Fee collector account
-    /// CHECK: This receives the fees
-    #[account(mut)]
+    /// Fee collector account (must be PDA for security)
+    /// HIGH-03 FIX: Use PDA to ensure fees go to correct address
+    /// CHECK: This is a PDA that receives fees, validated by seeds
+    #[account(
+        mut,
+        seeds = [FEE_COLLECTOR_SEED],
+        bump
+    )]
     pub fee_collector: UncheckedAccount<'info>,
     
     /// The vault authority
