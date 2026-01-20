@@ -1,67 +1,111 @@
-# jSOL Vault
+# jSOL - The Solana Index Fund
 
-A production-grade Solana Liquid Staking Token (LST) aggregator vault with automated rebalancing.
+[![Built on Solana](https://img.shields.io/badge/Built%20on-Solana-9945FF)](https://solana.com)
+[![Powered by Anchor](https://img.shields.io/badge/Powered%20by-Anchor%200.29-blue)](https://anchor-lang.com)
+[![Status](https://img.shields.io/badge/Status-In%20Development-yellow)](https://github.com/Jubilee-Protocol/jSOL-index)
+
+> A passive, diversified liquid staking strategy that automatically rebalances across Solana's top LST protocols while optimizing for APY.
+
+**Website**: Coming Soon  
+**App**: Coming Soon  
+**Program**: `TBD`  
+**Status**: 🔨 **In Development** — Jan 2026
+
+---
 
 ## Overview
 
-jSOL Vault aggregates user deposits across multiple LST protocols on Solana to optimize yield. Users deposit SOL and receive jSOL shares representing their proportional ownership of the vault's total value.
+jSOL aggregates user deposits across multiple Liquid Staking Token (LST) protocols on Solana, automatically rebalancing to optimize yield. Users deposit SOL and receive jSOL shares representing their proportional ownership.
 
-### Supported Protocols
-- **Jito** (jitoSOL) - Includes MEV rewards
-- **Marinade** (mSOL) - Largest LST on Solana
-- **BlazeStake** (bSOL) - Auto-compounding rewards
-- **Lido** (stSOL) - Cross-chain staking
-- **Native Staking** - Direct validator staking
-- **Jupiter** (JupSOL) - Jupiter's staked SOL
+### Key Features
 
-## Features
+- **Passive Strategy** - Deposit SOL, earn optimized staking rewards
+- **Diversified** - Spread across Jito, Marinade, BlazeStake, Lido & native staking  
+- **Auto-Rebalancing** - Adjusts allocations when APYs shift
+- **Secure** - Circuit breakers, oracle validation, pause mechanism
 
-- ✅ Multi-protocol LST aggregation
-- ✅ Automated rebalancing based on APY
-- ✅ Share-based accounting (jSOL token)
-- ✅ Management & performance fees
-- ✅ Emergency pause mechanism
-- ✅ Two-step withdrawal with unbonding
-- ✅ Oracle integration (Pyth)
-- ✅ Checked arithmetic (overflow safe)
+---
 
-## Architecture
+## Target Allocations
 
+| Protocol | Allocation | Token | Est. APY |
+|----------|------------|-------|----------|
+| Jito | 30% | jitoSOL | ~7.5% (incl. MEV) |
+| Marinade | 30% | mSOL | ~6.7% |
+| BlazeStake | 20% | bSOL | ~6.8% |
+| Lido | 10% | stSOL | ~6.5% |
+| Native | 10% | SOL | ~6.0% |
+
+**Target Blended APY**: 6.8-7.2%
+
+---
+
+## Fee Structure
+
+| Fee Type | Rate | Max Allowed |
+|----------|------|-------------|
+| Management Fee | 0.5% annually | 1.0% |
+| Performance Fee | 10% of gains | 20% |
+
+---
+
+## Security
+
+- **Audit Status**: Pending (Budget: $30K via Sherlock)
+- **Features**:
+  - ✅ Checked arithmetic (no overflow/underflow)
+  - ✅ Role-based access control
+  - ✅ Emergency pause mechanism
+  - ✅ Oracle staleness validation (60s max)
+  - ✅ Slippage protection on swaps
+  - ✅ Max 50% allocation per protocol
+
+---
+
+## Program Addresses
+
+### Mainnet
+| Account | Address |
+|---------|---------|
+| jSOL Vault | `TBD` |
+| jSOL Mint | `TBD` |
+
+### Devnet
+| Account | Address |
+|---------|---------|
+| jSOL Vault | `TBD` |
+| jSOL Mint | `TBD` |
+
+---
+
+## Repository Structure
 ```
 jsol-vault/
 ├── programs/jsol-vault/src/
 │   ├── lib.rs              # Program entry point
-│   ├── constants.rs        # Configuration constants
-│   ├── errors.rs           # Custom error types
-│   ├── state.rs            # On-chain accounts & events
-│   ├── instructions/       # Instruction handlers
+│   ├── constants.rs        # Configuration values
+│   ├── errors.rs           # 30+ custom error types
+│   ├── state.rs            # VaultState, UserAccount, WithdrawRequest
+│   ├── instructions/
 │   │   ├── initialize.rs   # Vault setup
-│   │   ├── deposit.rs      # User deposits
-│   │   ├── withdraw.rs     # Withdrawal flow
+│   │   ├── deposit.rs      # SOL deposits → jSOL shares
+│   │   ├── withdraw.rs     # Two-step withdrawal
 │   │   ├── rebalance.rs    # Allocation adjustment
-│   │   ├── admin.rs        # Admin functions
-│   │   └── staking.rs      # Protocol interactions
-│   └── utils/              # Utility functions
-│       ├── math.rs         # Safe math operations
+│   │   ├── admin.rs        # Config, fees, pause
+│   │   └── staking.rs      # LST protocol interactions
+│   └── utils/
+│       ├── math.rs         # Safe arithmetic
 │       ├── validation.rs   # Input validation
-│       ├── oracle.rs       # Price feeds
+│       ├── oracle.rs       # Pyth price feeds
 │       └── protocols.rs    # LST protocol helpers
-├── tests/                  # Test suite
+├── tests/                  # Anchor test suite
 ├── scripts/                # Deployment scripts
 └── deployments/            # Network-specific configs
 ```
 
-## Getting Started
+---
 
-### Prerequisites
-
-- Rust 1.70+
-- Solana CLI 1.17+
-- Anchor 0.29.0
-- Node.js 18+
-- Yarn
-
-### Installation
+## Quick Start
 
 ```bash
 # Install dependencies
@@ -72,77 +116,69 @@ anchor build
 
 # Run tests
 anchor test
-```
 
-### Local Development
-
-```bash
-# Start local validator
-solana-test-validator
-
-# Deploy locally
-anchor deploy
-
-# Run tests against local
-anchor test --skip-local-validator
-```
-
-## Configuration
-
-### Fee Structure
-| Fee Type | Default | Maximum |
-|----------|---------|---------|
-| Management | 0.5% (50 bps) | 1.0% (100 bps) |
-| Performance | 10% (1000 bps) | 20% (2000 bps) |
-
-### Allocation Limits
-- Maximum per protocol: 50% (5000 bps)
-- Total must equal: 100% (10000 bps)
-- Maximum protocols: 10
-
-### Default Allocations
-| Protocol | Allocation |
-|----------|------------|
-| Jito | 30% |
-| Marinade | 30% |
-| BlazeStake | 20% |
-| Lido | 10% |
-| Native | 10% |
-
-## Security
-
-- [x] Reentrancy guards on external calls
-- [x] Checked arithmetic (no overflow/underflow)
-- [x] Role-based access control
-- [x] Emergency pause mechanism
-- [x] Oracle staleness validation
-- [x] Slippage protection
-- [x] Allocation concentration limits
-
-### Audit Status
-- [ ] Pending security audit
-
-## Deployment
-
-### Devnet
-```bash
+# Deploy to devnet
 anchor deploy --provider.cluster devnet
 ```
 
-### Mainnet
-```bash
-# Requires confirmation
-anchor deploy --provider.cluster mainnet-beta
-```
+---
 
-## License
+## How It Works
 
-MIT License - see [LICENSE](LICENSE) for details.
+### Deposit Flow
+1. User deposits SOL into the vault
+2. Vault calculates shares based on current TVL
+3. jSOL tokens are minted to user
+4. SOL is allocated across LST protocols
 
-## Contributing
+### Withdrawal Flow (Two-Step)
+1. User requests withdrawal with jSOL amount
+2. Vault creates `WithdrawRequest` with ~3 day unlock
+3. User completes withdrawal after unlock period
+4. jSOL is burned, SOL returned to user
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines.
+### Rebalancing
+- Triggered when any protocol deviates >5% from target
+- Minimum 1 hour between rebalances
+- Open to any caller (permissionless trigger)
+- Slippage protection enforced
 
 ---
 
-Built with ❤️ by Jubilee Protocol
+## LST Protocol Integrations
+
+| Protocol | Program ID | Unstaking |
+|----------|------------|-----------|
+| Marinade | `MarBmsSg...` | Instant (0.3% fee) or delayed |
+| Jito | `Jito4APy...` | Instant (0.1% fee) |
+| BlazeStake | `stk9ApL5...` | ~2 days |
+| Lido | `CrX7kMhL...` | ~3 days |
+
+---
+
+## Roadmap
+
+- [x] Core program architecture
+- [x] State accounts and error handling
+- [x] Deposit/withdraw instructions
+- [x] Rebalancing logic
+- [ ] Pyth oracle integration (in progress)
+- [ ] Complete LST CPI integrations
+- [ ] Comprehensive test suite
+- [ ] Security audit
+- [ ] Devnet deployment
+- [ ] Mainnet launch
+
+---
+
+## Built By
+
+**[Jubilee Labs](https://jubileelabs.xyz)** • Powered by **[Anchor](https://anchor-lang.com)** • Deployed on **[Solana](https://solana.com)**
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
+
+---
+
+*"Seek first the Kingdom of God!"* — Matthew 6:33
