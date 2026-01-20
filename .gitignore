@@ -30,3 +30,4 @@ authority-keypair.json
 
 # Yarn
 .yarn
+docs/QA_GUIDE.md
