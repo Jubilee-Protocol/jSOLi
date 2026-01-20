@@ -1,0 +1,32 @@
+# Dependencies
+node_modules/
+
+# Build artifacts
+target/
+.anchor/
+
+# macOS
+.DS_Store
+
+# Test
+test-ledger/
+
+# Environment files
+.env
+.env.local
+
+# Logs
+*.log
+
+# Local deployments
+deployments/localnet/
+
+# Keypairs - NEVER commit these
+deployer-keypair.json
+authority-keypair.json
+
+# Rust backup files
+**/*.rs.bk
+
+# Yarn
+.yarn
