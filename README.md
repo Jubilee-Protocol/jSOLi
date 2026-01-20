@@ -1,4 +1,4 @@
-# jSOL - The Solana Index Fund
+# jSOLi - The Solana Index Fund
 
 [![Built on Solana](https://img.shields.io/badge/Built%20on-Solana-9945FF)](https://solana.com)
 [![Powered by Anchor](https://img.shields.io/badge/Powered%20by-Anchor%200.29-blue)](https://anchor-lang.com)
