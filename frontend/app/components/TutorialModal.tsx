@@ -6,12 +6,12 @@ interface TutorialModalProps {
     isOpen: boolean;
     onClose: () => void;
     theme: 'light' | 'dark';
-    btcPrice: number;
+    solPrice?: number; // Live SOL price from useSolPrice hook
 }
 
 type TutorialStep = 1 | 2 | 3 | 4;
 
-const TUTORIAL_VERSION = 'jbtci_tutorial_v1';
+const TUTORIAL_VERSION = 'jsoli_tutorial_v1';
 
 export function useTutorial() {
     const [showTutorial, setShowTutorial] = useState(false);
@@ -46,9 +46,13 @@ export function useTutorial() {
     };
 }
 
-export function TutorialModal({ isOpen, onClose, theme, btcPrice }: TutorialModalProps) {
+export function TutorialModal({ isOpen, onClose, theme, solPrice = 150 }: TutorialModalProps) {
     const [step, setStep] = useState<TutorialStep>(1);
-    const minDepositUSD = (0.01 * btcPrice).toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+
+    // Calculate min deposit in USD using live SOL price
+    const minDepositUSD = (0.1 * solPrice).toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+    // Calculate sats equivalent (assuming 1 BTC = $100k for now, 100M sats/BTC)
+    const minDepositSats = Math.round((0.1 * solPrice / 100000) * 100000000).toLocaleString();
 
     const c = theme === 'dark' ? {
         bg: 'rgba(20, 20, 35, 0.98)',
@@ -56,14 +60,14 @@ export function TutorialModal({ isOpen, onClose, theme, btcPrice }: TutorialModa
         text: '#ffffff',
         textMuted: '#a0a0b0',
         border: '#2a2a3e',
-        accent: '#E040FB',
+        accent: '#9945FF', // Solana Purple
     } : {
         bg: 'rgba(255, 255, 255, 0.98)',
         card: '#ffffff',
         text: '#1a1a2e',
         textMuted: '#666680',
         border: '#e5e7eb',
-        accent: '#E040FB',
+        accent: '#9945FF', // Solana Purple
     };
 
     if (!isOpen) return null;
@@ -111,7 +115,7 @@ export function TutorialModal({ isOpen, onClose, theme, btcPrice }: TutorialModa
             }}>
                 {/* Header */}
                 <div style={{
-                    background: `linear-gradient(135deg, #E040FB 0%, #7C4DFF 100%)`,
+                    background: `linear-gradient(135deg, #9945FF 0%, #14F195 100%)`, // Solana Gradient
                     padding: '24px',
                     textAlign: 'center',
                 }}>
@@ -121,7 +125,7 @@ export function TutorialModal({ isOpen, onClose, theme, btcPrice }: TutorialModa
                         fontWeight: '700',
                         margin: 0,
                     }}>
-                        {step === 1 && '💜 Welcome to jBTCi'}
+                        {step === 1 && '💜 Welcome to jSOLi'}
                         {step === 2 && '⚙️ How It Works'}
                         {step === 3 && '💰 Getting Started'}
                         {step === 4 && '🚀 Ready to Deposit'}
@@ -136,17 +140,16 @@ export function TutorialModal({ isOpen, onClose, theme, btcPrice }: TutorialModa
                     {step === 1 && (
                         <div>
                             <h3 style={{ color: c.text, fontSize: '18px', marginBottom: '16px' }}>
-                                Diversified Bitcoin, Simplified
+                                Diversified Staking, Simplified
                             </h3>
                             <p style={{ color: c.textMuted, lineHeight: 1.6, marginBottom: '20px' }}>
-                                jBTCi is a Bitcoin index token that automatically diversifies your BTC
-                                across <strong>cbBTC</strong> and <strong>wBTC</strong> — the two most
-                                trusted wrapped Bitcoin tokens on Base.
+                                jSOLi is a Solana Liquid Staking Index that automatically diversifies your SOL
+                                across <strong>Marinade</strong>, <strong>Jito</strong>, and <strong>BlazeStake</strong> — the top LST protocols on Solana.
                             </p>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                                 <Feature icon="🔐" text="Non-custodial — You control your tokens" theme={theme} />
-                                <Feature icon="⚖️" text="Auto-rebalancing — Always 50/50 split" theme={theme} />
-                                <Feature icon="📈" text="One token — Tracks the BTC index" theme={theme} />
+                                <Feature icon="⚖️" text="Auto-rebalancing — Optimized yield" theme={theme} />
+                                <Feature icon="📈" text="One token — Tracks the SOL staking index" theme={theme} />
                             </div>
                         </div>
                     )}
@@ -154,7 +157,7 @@ export function TutorialModal({ isOpen, onClose, theme, btcPrice }: TutorialModa
                     {step === 2 && (
                         <div>
                             <h3 style={{ color: c.text, fontSize: '18px', marginBottom: '16px' }}>
-                                Deposit cbBTC, Get jBTCi
+                                Deposit SOL, Get jSOLi
                             </h3>
                             {/* Visual Flow */}
                             <div style={{
@@ -165,7 +168,7 @@ export function TutorialModal({ isOpen, onClose, theme, btcPrice }: TutorialModa
                                 textAlign: 'center',
                             }}>
                                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', flexWrap: 'wrap' }}>
-                                    <Token name="cbBTC" color="#0052FF" />
+                                    <Token name="SOL" color="#9945FF" />
                                     <Arrow />
                                     <div style={{
                                         background: c.accent,
@@ -174,10 +177,10 @@ export function TutorialModal({ isOpen, onClose, theme, btcPrice }: TutorialModa
                                         color: 'white',
                                         fontWeight: '600',
                                     }}>
-                                        jBTCi Strategy
+                                        jSOLi Strategy
                                     </div>
                                     <Arrow />
-                                    <Token name="jBTCi" color="#E040FB" />
+                                    <Token name="jSOLi" color="#14F195" />
                                 </div>
                                 <div style={{
                                     marginTop: '16px',
@@ -187,15 +190,16 @@ export function TutorialModal({ isOpen, onClose, theme, btcPrice }: TutorialModa
                                     justifyContent: 'center',
                                     gap: '24px',
                                 }}>
-                                    <span>50% cbBTC</span>
-                                    <span>50% wBTC</span>
+                                    <span>Marinade</span>
+                                    <span>Jito</span>
+                                    <span>Blaze</span>
                                 </div>
                             </div>
                             <ol style={{ color: c.textMuted, lineHeight: 1.8, paddingLeft: '20px', margin: 0 }}>
-                                <li>Deposit your cbBTC</li>
-                                <li>Receive jBTCi tokens (1:1 ratio)</li>
-                                <li>Strategy auto-rebalances to 50/50</li>
-                                <li>Withdraw anytime to get cbBTC back</li>
+                                <li>Deposit your SOL</li>
+                                <li>Receive jSOLi tokens</li>
+                                <li>Strategy autocompounds staking rewards</li>
+                                <li>Withdraw anytime to get SOL back</li>
                             </ol>
                         </div>
                     )}
@@ -203,24 +207,24 @@ export function TutorialModal({ isOpen, onClose, theme, btcPrice }: TutorialModa
                     {step === 3 && (
                         <div>
                             <h3 style={{ color: c.text, fontSize: '18px', marginBottom: '16px' }}>
-                                You'll Need cbBTC
+                                You'll Need SOL
                             </h3>
                             <p style={{ color: c.textMuted, lineHeight: 1.6, marginBottom: '20px' }}>
-                                Don't have cbBTC? No problem! You can get it from:
+                                Don't have SOL? You can get it easily:
                             </p>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '20px' }}>
                                 <LinkCard
                                     icon="🏦"
                                     title="Coinbase"
-                                    subtitle="Buy and bridge cbBTC directly"
+                                    subtitle="Buy SOL directly"
                                     href="https://coinbase.com"
                                     theme={theme}
                                 />
                                 <LinkCard
                                     icon="🔄"
-                                    title="Uniswap"
-                                    subtitle="Swap ETH or any token for cbBTC"
-                                    href="https://app.uniswap.org/swap?chain=base&outputCurrency=0xcbB7C0000aB88B473b1f5aFd9ef808440eed33Bf"
+                                    title="Jupiter"
+                                    subtitle="Swap any token for SOL"
+                                    href="https://jup.ag"
                                     theme={theme}
                                 />
                             </div>
@@ -231,10 +235,7 @@ export function TutorialModal({ isOpen, onClose, theme, btcPrice }: TutorialModa
                                 padding: '16px',
                             }}>
                                 <p style={{ margin: 0, color: theme === 'dark' ? '#FCD34D' : '#92400E', fontSize: '14px' }}>
-                                    <strong>Minimum deposit:</strong> 0.01 BTC ({minDepositUSD})
-                                </p>
-                                <p style={{ margin: '8px 0 0', fontSize: '11px', color: theme === 'dark' ? '#a0a0b0' : '#78716c' }}>
-                                    Price by <a href="https://www.coingecko.com/" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline' }}>CoinGecko</a>
+                                    <strong>Recommended deposit:</strong> 0.1 SOL (~{minDepositUSD})
                                 </p>
                             </div>
                         </div>
@@ -246,10 +247,10 @@ export function TutorialModal({ isOpen, onClose, theme, btcPrice }: TutorialModa
                                 Quick Recap
                             </h3>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '24px' }}>
-                                <Step num={1} text="Connect your wallet (top right)" theme={theme} />
-                                <Step num={2} text="Enter your deposit amount" theme={theme} />
-                                <Step num={3} text="Approve cbBTC spending (one-time)" theme={theme} />
-                                <Step num={4} text="Confirm deposit & receive jBTCi" theme={theme} />
+                                <Step num={1} text="Connect your Phantom/Solflare wallet" theme={theme} />
+                                <Step num={2} text="Enter your SOL deposit amount" theme={theme} />
+                                <Step num={3} text="Confirm transaction" theme={theme} />
+                                <Step num={4} text="Receive jSOLi & earn yield" theme={theme} />
                             </div>
                             <div style={{
                                 background: `linear-gradient(135deg, ${c.accent}15 0%, ${c.accent}05 100%)`,
@@ -258,7 +259,7 @@ export function TutorialModal({ isOpen, onClose, theme, btcPrice }: TutorialModa
                                 textAlign: 'center',
                             }}>
                                 <p style={{ margin: 0, color: c.text, fontSize: '14px' }}>
-                                    💡 You can reopen this tutorial anytime from the <strong>Tutorial</strong> button
+                                    💡 You can reopen this tutorial anytime
                                 </p>
                             </div>
                         </div>
@@ -322,7 +323,7 @@ export function TutorialModal({ isOpen, onClose, theme, btcPrice }: TutorialModa
                     <button
                         onClick={handleNext}
                         style={{
-                            background: `linear-gradient(135deg, #E040FB 0%, #7C4DFF 100%)`,
+                            background: `linear-gradient(135deg, #9945FF 0%, #14F195 100%)`,
                             border: 'none',
                             borderRadius: '12px',
                             padding: '12px 32px',
@@ -425,7 +426,7 @@ function Step({ num, text, theme }: { num: number; text: string; theme: 'light' 
                 width: '28px',
                 height: '28px',
                 borderRadius: '50%',
-                background: '#E040FB',
+                background: '#9945FF',
                 color: 'white',
                 display: 'flex',
                 alignItems: 'center',

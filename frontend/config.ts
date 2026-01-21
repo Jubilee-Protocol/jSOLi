@@ -3,26 +3,39 @@
 
 import { PublicKey } from '@solana/web3.js';
 
-// Environment
+// Environment - Check for local development first
+export const IS_LOCAL = process.env.NEXT_PUBLIC_NETWORK === 'local' || process.env.NODE_ENV === 'development';
 export const IS_MAINNET = process.env.NEXT_PUBLIC_NETWORK === 'mainnet-beta';
-export const IS_DEVNET = !IS_MAINNET;
+export const IS_DEVNET = !IS_MAINNET && !IS_LOCAL;
 
 // RPC Endpoints
 export const RPC_ENDPOINTS = {
+  local: 'http://localhost:8899',
   mainnet: process.env.NEXT_PUBLIC_MAINNET_RPC || 'https://api.mainnet-beta.solana.com',
   devnet: process.env.NEXT_PUBLIC_DEVNET_RPC || 'https://api.devnet.solana.com',
 };
 
-export const RPC_ENDPOINT = IS_MAINNET ? RPC_ENDPOINTS.mainnet : RPC_ENDPOINTS.devnet;
+// Use localhost for development by default
+export const RPC_ENDPOINT = IS_LOCAL
+  ? RPC_ENDPOINTS.local
+  : IS_MAINNET
+    ? RPC_ENDPOINTS.mainnet
+    : RPC_ENDPOINTS.devnet;
 
-// Program IDs
+// Program IDs - All networks use the same deployed program
+const PROGRAM_IDS = {
+  local: 'DSBLsQNcR9UVnoqbBw2cVvQUXj9PkHzp22xBq9ow8NdV',
+  devnet: 'DSBLsQNcR9UVnoqbBw2cVvQUXj9PkHzp22xBq9ow8NdV',  // Deployed Jan 21, 2026
+  mainnet: 'DSBLsQNcR9UVnoqbBw2cVvQUXj9PkHzp22xBq9ow8NdV', // Same program ID
+};
+
 export const PROGRAM_ID = new PublicKey(
-  process.env.NEXT_PUBLIC_PROGRAM_ID || 'EYJcdmSJEEtkTLHhgDCvGci1GgEthDe4RFn1tV2PoZu3'
+  process.env.NEXT_PUBLIC_PROGRAM_ID || (IS_LOCAL ? PROGRAM_IDS.local : PROGRAM_IDS.devnet)
 );
 
 // PDA Seeds (must match Rust constants)
 export const VAULT_SEED = 'vault';
-export const JSOLI_MINT_SEED = 'jsol_mint'; // Will be 'jsoli_mint' after full rename
+export const JSOLI_MINT_SEED = 'jsoli_mint'; // Note: with 'i'
 export const USER_ACCOUNT_SEED = 'user';
 export const WITHDRAW_REQUEST_SEED = 'withdraw';
 
@@ -34,15 +47,23 @@ export const JSOLI_DECIMALS = 9;
 export const APP_NAME = 'jSOLi';
 export const APP_DESCRIPTION = 'The Solana Staking Index - Diversified passive yield across top LST protocols';
 
+// Production URLs
+export const PRODUCTION_URL = 'https://mint.jsoli.xyz';
+export const LANDING_URL = 'https://jsoli.xyz';
+
 // Links
 export const LINKS = {
+  app: 'https://mint.jsoli.xyz',
+  landing: 'https://jsoli.xyz',
   github: 'https://github.com/Jubilee-Protocol/jSOLi',
   twitter: 'https://twitter.com/jubileeprotocol',
   audit: 'https://github.com/Jubilee-Protocol/jSOLi/blob/main/docs/AUDIT_REPORT.md',
   docs: 'https://github.com/Jubilee-Protocol/jSOLi#readme',
-  explorer: IS_MAINNET 
+  explorer: IS_MAINNET
     ? 'https://solscan.io'
-    : 'https://solscan.io/?cluster=devnet',
+    : IS_LOCAL
+      ? 'http://localhost:8899'
+      : 'https://solscan.io/?cluster=devnet',
 };
 
 // Fee Display

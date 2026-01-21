@@ -1,0 +1,20 @@
+{
+    "rules": [
+        {
+            "pathPattern": "/api/actions/deposit",
+            "apiPath": "/api/actions/deposit"
+        },
+        {
+            "pathPattern": "/api/actions/withdraw",
+            "apiPath": "/api/actions/withdraw"
+        },
+        {
+            "pathPattern": "/deposit",
+            "apiPath": "/api/actions/deposit"
+        },
+        {
+            "pathPattern": "/withdraw",
+            "apiPath": "/api/actions/withdraw"
+        }
+    ]
+}

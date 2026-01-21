@@ -15,7 +15,12 @@ const queryClient = new QueryClient();
 
 // Get RPC endpoint from environment or default
 const getEndpoint = () => {
-    const network = process.env.NEXT_PUBLIC_NETWORK || 'devnet';
+    const network = process.env.NEXT_PUBLIC_NETWORK || 'devnet'; // Default to devnet for testing
+
+    // Local development - use localhost
+    if (network === 'local') {
+        return 'http://localhost:8899';
+    }
 
     // Custom RPC endpoints (recommended for production)
     if (network === 'mainnet-beta' && process.env.NEXT_PUBLIC_MAINNET_RPC) {

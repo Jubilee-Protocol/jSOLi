@@ -1,114 +1,17 @@
 'use client';
 
 import Image from 'next/image';
-import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { useAccount, useReadContract, useWriteContract, useChainId, useWaitForTransactionReceipt, useConnect } from 'wagmi';
-import { useCapabilities } from 'wagmi/experimental';
-import { useState, useEffect, useCallback, useMemo } from 'react';
-import { formatUnits, parseUnits } from 'viem';
-import { base } from 'wagmi/chains';
-import { CONTRACTS } from '../config';
-import { useIsMiniApp, useMiniAppReady } from './hooks/useMiniApp';
+import { useWallet, useConnection } from '@solana/wallet-adapter-react';
+import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
+import { LAMPORTS_PER_SOL } from '@solana/web3.js';
+import { useState, useEffect, useCallback } from 'react';
+import { ALLOCATIONS, TARGET_APY_LOW, TARGET_APY_HIGH, LINKS, formatSOL } from '../config';
+import { useProgram } from './hooks/useProgram';
+import { useSolPrice, getMinDepositUSD } from './hooks/useSolPrice';
+import { TermsModal, useTerms } from './components/TermsModal';
+import { TreasuryModal } from './components/TreasuryModal';
+import { AccessLinks } from './components/AccessLinks';
 import { TutorialModal, useTutorial } from './components/TutorialModal';
-import { FASBDashboard } from './components/FASBDashboard';
-import { TreasuryMode } from './components/TreasuryMode';
-import { OnrampModal } from './components/OnrampModal';
-
-// Min deposit constant
-const MIN_DEPOSIT_BTC = 0.01;
-
-// MAINTENANCE MODE - Applies to MAINNET only
-// Testnet (Base Sepolia) works during maintenance for testing
-const MAINNET_MAINTENANCE = false; // 🚀 jBTCi is LIVE on mainnet! Jan 16 2026
-const MAINTENANCE_MESSAGE = "jBTCi is undergoing scheduled maintenance. Deposits and withdrawals are temporarily disabled on mainnet. Testnet is available for testing.";
-
-// Strategy ABI - deposit, redeem, convertToAssets, and status
-const STRATEGY_ABI = [
-    {
-        name: 'getStrategyStatus',
-        type: 'function',
-        stateMutability: 'view',
-        inputs: [],
-        outputs: [{
-            type: 'tuple',
-            components: [
-                { name: 'isPaused', type: 'bool' },
-                { name: 'isCBTriggered', type: 'bool' },
-                { name: 'isInOracleFailureMode', type: 'bool' },
-                { name: 'totalHoldings', type: 'uint256' },
-                { name: 'dailySwapUsed', type: 'uint256' },
-                { name: 'dailySwapLimit', type: 'uint256' },
-                { name: 'lastGasCost', type: 'uint256' },
-                { name: 'rebalancesExecuted', type: 'uint256' },
-                { name: 'rebalancesFailed', type: 'uint256' },
-                { name: 'swapsExecuted', type: 'uint256' },
-                { name: 'swapsFailed', type: 'uint256' },
-                { name: 'wbtcAlloc', type: 'uint256' },
-                { name: 'cbbtcAlloc', type: 'uint256' },
-                { name: 'failCount', type: 'uint256' },
-                { name: 'timeUntilReset', type: 'uint256' },
-            ]
-        }]
-    },
-    {
-        name: 'deposit',
-        type: 'function',
-        stateMutability: 'nonpayable',
-        inputs: [
-            { name: 'assets', type: 'uint256' },
-            { name: 'receiver', type: 'address' }
-        ],
-        outputs: [{ name: 'shares', type: 'uint256' }]
-    },
-    {
-        name: 'redeem',
-        type: 'function',
-        stateMutability: 'nonpayable',
-        inputs: [
-            { name: 'shares', type: 'uint256' },
-            { name: 'receiver', type: 'address' },
-            { name: 'owner', type: 'address' }
-        ],
-        outputs: [{ name: 'assets', type: 'uint256' }]
-    },
-    {
-        name: 'convertToAssets',
-        type: 'function',
-        stateMutability: 'view',
-        inputs: [{ name: 'shares', type: 'uint256' }],
-        outputs: [{ name: 'assets', type: 'uint256' }]
-    },
-] as const;
-
-const ERC20_ABI = [
-    {
-        name: 'balanceOf',
-        type: 'function',
-        stateMutability: 'view',
-        inputs: [{ name: 'account', type: 'address' }],
-        outputs: [{ type: 'uint256' }]
-    },
-    {
-        name: 'allowance',
-        type: 'function',
-        stateMutability: 'view',
-        inputs: [
-            { name: 'owner', type: 'address' },
-            { name: 'spender', type: 'address' }
-        ],
-        outputs: [{ type: 'uint256' }]
-    },
-    {
-        name: 'approve',
-        type: 'function',
-        stateMutability: 'nonpayable',
-        inputs: [
-            { name: 'spender', type: 'address' },
-            { name: 'amount', type: 'uint256' }
-        ],
-        outputs: [{ type: 'bool' }]
-    },
-] as const;
 
 // Theme types
 type Theme = 'light' | 'dark';
@@ -117,1205 +20,492 @@ type Theme = 'light' | 'dark';
 const getGradientStyle = (theme: Theme) => ({
     background: theme === 'light'
         ? `
-            radial-gradient(ellipse at top left, rgba(243, 119, 187, 0.30) 0%, transparent 60%),
-            radial-gradient(ellipse at bottom right, rgba(243, 119, 187, 0.22) 0%, transparent 60%),
-            radial-gradient(ellipse at center, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0.85) 40%, rgba(0, 82, 255, 0.25) 100%)
+            radial-gradient(ellipse at top left, rgba(153, 69, 255, 0.15) 0%, transparent 60%),
+            radial-gradient(ellipse at bottom right, rgba(20, 241, 149, 0.10) 0%, transparent 60%),
+            radial-gradient(ellipse at center, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0.95) 40%, rgba(153, 69, 255, 0.12) 100%)
         `
         : `
-            radial-gradient(ellipse at top left, rgba(243, 119, 187, 0.15) 0%, transparent 60%),
-            radial-gradient(ellipse at bottom right, rgba(0, 82, 255, 0.15) 0%, transparent 60%),
+            radial-gradient(ellipse at top left, rgba(153, 69, 255, 0.20) 0%, transparent 60%),
+            radial-gradient(ellipse at bottom right, rgba(20, 241, 149, 0.15) 0%, transparent 60%),
             #0a0a0f
         `,
     minHeight: '100vh'
 });
 
-// Theme colors
+// Theme colors (Solana branding)
 const colors = {
     light: {
         bg: '#FFFFFF',
         card: '#FFFFFF',
-        cardBorder: 'rgba(0, 82, 255, 0.1)',
+        cardBorder: 'rgba(153, 69, 255, 0.15)',
         text: '#3B3B3B',
         textMuted: '#6B7280',
         textLight: '#9CA3AF',
         inputBg: '#F9FAFB',
+        accent: '#9945FF',
+        accentLight: 'rgba(153, 69, 255, 0.1)',
     },
     dark: {
         bg: '#0a0a0f',
         card: '#1a1a2e',
-        cardBorder: 'rgba(0, 82, 255, 0.2)',
+        cardBorder: 'rgba(153, 69, 255, 0.25)',
         text: '#E5E7EB',
         textMuted: '#9CA3AF',
         textLight: '#6B7280',
         inputBg: '#16162a',
+        accent: '#9945FF',
+        accentLight: 'rgba(153, 69, 255, 0.15)',
     }
 };
 
-// Toast component - mobile responsive
-function Toast({ message, type, onClose }: { message: string; type: 'success' | 'error' | 'pending'; onClose: () => void }) {
-    useEffect(() => {
-        if (type !== 'pending') {
-            const timer = setTimeout(onClose, 5000);
-            return () => clearTimeout(timer);
-        }
-    }, [type, onClose]);
-
-    const bgColor = type === 'success' ? '#22C55E' : type === 'error' ? '#EF4444' : '#0052FF';
-
-    return (
-        <div style={{
-            position: 'fixed',
-            bottom: '16px',
-            left: '16px',
-            right: '16px',
-            background: bgColor,
-            color: 'white',
-            padding: '14px 20px',
-            borderRadius: '12px',
-            boxShadow: '0 10px 40px rgba(0,0,0,0.2)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '12px',
-            zIndex: 9999,
-            animation: 'slideIn 0.3s ease'
-        }}>
-            {type === 'pending' && (
-                <div style={{
-                    width: '20px',
-                    height: '20px',
-                    border: '2px solid white',
-                    borderTopColor: 'transparent',
-                    borderRadius: '50%',
-                    animation: 'spin 1s linear infinite',
-                    flexShrink: 0
-                }} />
-            )}
-            {type === 'success' && <span>✓</span>}
-            {type === 'error' && <span>✕</span>}
-            <span style={{ flex: 1, fontSize: '14px' }}>{message}</span>
-            {type !== 'pending' && (
-                <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer', fontSize: '18px', padding: '4px' }}>×</button>
-            )}
-        </div>
-    );
-}
-
-// Skeleton loader component for loading states
-function Skeleton({ width = '60px', height = '18px' }: { width?: string; height?: string }) {
-    return (
-        <div style={{
-            width,
-            height,
-            background: 'linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%)',
-            backgroundSize: '200% 100%',
-            animation: 'shimmer 1.5s infinite',
-            borderRadius: '4px',
-            display: 'inline-block',
-        }} />
-    );
-}
-
-// Transaction history type
-interface TxHistoryItem {
-    type: 'deposit' | 'withdraw';
-    amount: string;
-    timestamp: number;
-    hash: string;
-}
-
 export default function Home() {
-    const { address, isConnected } = useAccount();
-    const chainId = useChainId();
-    const { connectors, connect } = useConnect();
+    const { connection } = useConnection();
+    const { publicKey } = useWallet();
+    const { deposit, withdraw, getVaultState, getUserAccount, loading, error, connected } = useProgram();
+
+    const [balance, setBalance] = useState<number>(0);
+    const [jsoliBalance, setJsoliBalance] = useState<number>(0);
     const [depositAmount, setDepositAmount] = useState('');
     const [activeTab, setActiveTab] = useState<'deposit' | 'withdraw'>('deposit');
-    const [hasAcceptedTerms, setHasAcceptedTerms] = useState(false);
-    const [showTermsModal, setShowTermsModal] = useState(true);
-    const [rememberDevice, setRememberDevice] = useState(false);
-    const [btcPrice, setBtcPrice] = useState(91000);
-    const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'pending' } | null>(null);
-    const [theme, setTheme] = useState<Theme>('light');
-    const [showHistory, setShowHistory] = useState(false);
-    const [showFASBDashboard, setShowFASBDashboard] = useState(false);
-    const [showTreasuryMode, setShowTreasuryMode] = useState(false);
-    const [showOnramp, setShowOnramp] = useState(false);
-    const [txHistory, setTxHistory] = useState<TxHistoryItem[]>([]);
+    const [theme, setTheme] = useState<Theme>('dark'); // Default to dark to match SSR
+    const [txStatus, setTxStatus] = useState<'idle' | 'pending' | 'success' | 'error'>('idle');
+    const [txMessage, setTxMessage] = useState('');
+    const [mounted, setMounted] = useState(false);
 
-    // Mini app detection and frame readiness
-    const isMiniApp = useIsMiniApp();
-    useMiniAppReady();
+    // Vault stats
+    const [tvl, setTvl] = useState<number>(0);
+    const [apy, setApy] = useState<number>((TARGET_APY_LOW + TARGET_APY_HIGH) / 2);
+    const [isPaused, setIsPaused] = useState(false);
 
-    // Maintenance mode only applies to mainnet (Base, chainId 8453)
-    // Testnet (Base Sepolia, chainId 84532) works during maintenance
-    const isMaintenanceMode = MAINNET_MAINTENANCE && chainId === 8453;
+    // Terms and Tutorial hooks
+    const { showTerms, acceptTerms } = useTerms();
+    const { showTutorial, reopenTutorial, closeTutorial, completeTutorial } = useTutorial();
+    const [showTreasury, setShowTreasury] = useState(false);
 
-    // Tutorial for first-time visitors
-    const { showTutorial, completeTutorial, reopenTutorial } = useTutorial();
+    // SOL price hook
+    const { price: solPrice } = useSolPrice();
+    const minDepositSOL = 0.1;
+    const minDepositUSD = solPrice > 0 ? getMinDepositUSD(solPrice, minDepositSOL) : '...';
 
-    // Check if wallet supports gas sponsorship (Coinbase Smart Wallet)
-    const { data: capabilities } = useCapabilities({ account: address });
-    const isGasFree = useMemo(() => {
-        if (!capabilities || !chainId) return false;
-        const chainCapabilities = capabilities[chainId];
-        return chainCapabilities?.paymasterService?.supported === true && chainId === base.id;
-    }, [capabilities, chainId]);
-
-    // Auto-connect for Safe Apps - when opened inside Safe iframe
+    // Mounted check for hydration
     useEffect(() => {
-        if (!isConnected && connectors.length > 0) {
-            // Check if we're in Safe iframe by looking for Safe connector
-            const safeConnector = connectors.find(c => c.id === 'safe' || c.name.toLowerCase().includes('safe'));
+        setMounted(true);
+    }, []);
 
-            if (safeConnector) {
-                // Try to connect with Safe connector first (will fail if not in Safe iframe)
-                const timer = setTimeout(async () => {
-                    try {
-                        await connect({ connector: safeConnector });
-                        console.log('[Safe] Auto-connected via Safe connector');
-                    } catch (e) {
-                        // Not in Safe iframe, normal flow
-                        console.log('[Safe] Not in Safe iframe, skipping auto-connect');
-                    }
-                }, 300);
-                return () => clearTimeout(timer);
-            }
-        }
-    }, [isConnected, connectors, connect]);
-
-    // Auto-connect in Farcaster mini app context (try Coinbase/injected wallet)
+    // Theme logic - only run on client after mount
     useEffect(() => {
-        if (isMiniApp && !isConnected && connectors.length > 0) {
-            // Try to find and auto-connect with injected or Coinbase wallet
-            const coinbaseConnector = connectors.find(c => c.name.toLowerCase().includes('coinbase'));
-            const injectedConnector = connectors.find(c => c.name.toLowerCase().includes('injected'));
-            const targetConnector = coinbaseConnector || injectedConnector;
-
-            if (targetConnector) {
-                // Delay to allow frame to initialize
-                const timer = setTimeout(() => {
-                    connect({ connector: targetConnector });
-                }, 500);
-                return () => clearTimeout(timer);
-            }
+        if (mounted && window.matchMedia('(prefers-color-scheme: light)').matches) {
+            setTheme('light');
         }
-    }, [isMiniApp, isConnected, connectors, connect]);
-
-    // Get theme colors
+    }, [mounted]);
     const c = colors[theme];
 
-    // Contract write hooks - include error and reset for proper state management
-    const { writeContract: approveToken, data: approveHash, isPending: isApproving, error: approveError, reset: resetApprove } = useWriteContract();
-    const { writeContract: depositAssets, data: depositHash, isPending: isDepositing, error: depositError, reset: resetDeposit } = useWriteContract();
-    const { writeContract: redeemShares, data: redeemHash, isPending: isRedeeming, error: redeemError, reset: resetRedeem } = useWriteContract();
-
-    // Wait for transaction receipts - include error state
-    const { isLoading: isApproveConfirming, isSuccess: isApproveSuccess, isError: isApproveFailed } = useWaitForTransactionReceipt({ hash: approveHash });
-    const { isLoading: isDepositConfirming, isSuccess: isDepositSuccess, isError: isDepositFailed } = useWaitForTransactionReceipt({ hash: depositHash });
-    const { isLoading: isRedeemConfirming, isSuccess: isRedeemSuccess, isError: isRedeemFailed } = useWaitForTransactionReceipt({ hash: redeemHash });
-
-    // Load theme from localStorage
+    // Fetch SOL balance
     useEffect(() => {
-        const savedTheme = localStorage.getItem('jbtci-theme') as Theme | null;
-        if (savedTheme) {
-            setTheme(savedTheme);
-        } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            setTheme('dark');
-        }
-    }, []);
+        if (!publicKey) return;
+        connection.getBalance(publicKey).then(lamports => {
+            setBalance(lamports / LAMPORTS_PER_SOL);
+        });
+    }, [publicKey, connection]);
 
-    // Toggle theme
-    const toggleTheme = useCallback(() => {
-        const newTheme = theme === 'light' ? 'dark' : 'light';
-        setTheme(newTheme);
-        localStorage.setItem('jbtci-theme', newTheme);
-    }, [theme]);
-
-    // Load transaction history from localStorage
+    // Fetch vault state
     useEffect(() => {
-        if (address) {
-            const saved = localStorage.getItem(`jbtci-history-${address}`);
-            if (saved) {
-                setTxHistory(JSON.parse(saved));
+        const fetchVaultData = async () => {
+            const vaultState = await getVaultState();
+            if (vaultState) {
+                setTvl(Number(vaultState.totalTvl) / LAMPORTS_PER_SOL);
             }
-        }
-    }, [address]);
 
-    // Save transaction to history
-    const saveTxToHistory = useCallback((type: 'deposit' | 'withdraw', amount: string, hash: string) => {
-        if (!address) return;
-        const newTx: TxHistoryItem = { type, amount, timestamp: Date.now(), hash };
-        const updated = [newTx, ...txHistory].slice(0, 20); // Keep last 20
-        setTxHistory(updated);
-        localStorage.setItem(`jbtci-history-${address}`, JSON.stringify(updated));
-    }, [address, txHistory]);
-
-    // Fetch live BTC price from CoinGecko
-    useEffect(() => {
-        const fetchPrice = async () => {
-            try {
-                const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd');
-                const data = await res.json();
-                if (data?.bitcoin?.usd) {
-                    setBtcPrice(data.bitcoin.usd);
-                }
-            } catch (err) {
-                console.log('Price fetch failed, using fallback');
+            const userAccount = await getUserAccount();
+            if (userAccount) {
+                setJsoliBalance(Number(userAccount.shares) / LAMPORTS_PER_SOL);
             }
         };
-        fetchPrice();
-        const interval = setInterval(fetchPrice, 60000);
-        return () => clearInterval(interval);
-    }, []);
 
-    // Check localStorage for remembered terms acceptance
-    useEffect(() => {
-        const remembered = localStorage.getItem('jbtci-terms-remembered');
-        if (remembered === 'true') {
-            setHasAcceptedTerms(true);
-            setShowTermsModal(false);
+        if (connected) {
+            fetchVaultData();
         }
-    }, []);
+    }, [connected, getVaultState, getUserAccount]);
 
-    // Handle transaction success toasts and history
-    useEffect(() => {
-        if (isDepositSuccess && depositHash) {
-            setToast({ message: 'Deposit successful! You received jBTCi tokens.', type: 'success' });
-            saveTxToHistory('deposit', depositAmount, depositHash);
-            setDepositAmount('');
-        }
-    }, [isDepositSuccess]);
-
-    useEffect(() => {
-        if (isRedeemSuccess && redeemHash) {
-            setToast({ message: 'Withdrawal successful! cbBTC sent to your wallet.', type: 'success' });
-            saveTxToHistory('withdraw', depositAmount, redeemHash);
-            setDepositAmount('');
-        }
-    }, [isRedeemSuccess]);
-
-    useEffect(() => {
-        if (isApproveSuccess && depositAmount && address) {
-            // IMPORTANT: After approval succeeds, we MUST reset and directly deposit
-            // DO NOT call handleDeposit() as it will re-check allowance which may be stale
-            setToast({ message: 'Approval confirmed! Now depositing...', type: 'pending' });
-
-            // Reset the approval state to prevent loops
-            resetApprove();
-
-            // Refetch allowance for next time, then deposit directly
-            refetchAllowance().then(() => {
-                const amountWei = parseUnits(depositAmount, 8);
-                depositAssets({
-                    address: strategyAddress,
-                    abi: STRATEGY_ABI,
-                    functionName: 'deposit',
-                    args: [amountWei, address],
-                } as any);
-            });
-        }
-    }, [isApproveSuccess]);
-
-    // Handle transaction errors and cancellations
-    useEffect(() => {
-        if (approveError) {
-            const msg = approveError.message.includes('User rejected')
-                ? 'Approval cancelled by user'
-                : 'Approval failed: ' + approveError.message.slice(0, 50);
-            setToast({ message: msg, type: 'error' });
-            resetApprove();
-        }
-    }, [approveError]);
-
-    useEffect(() => {
-        if (depositError) {
-            const msg = depositError.message.includes('User rejected')
-                ? 'Deposit cancelled by user'
-                : 'Deposit failed: ' + depositError.message.slice(0, 50);
-            setToast({ message: msg, type: 'error' });
-            resetDeposit();
-        }
-    }, [depositError]);
-
-    useEffect(() => {
-        if (redeemError) {
-            const msg = redeemError.message.includes('User rejected')
-                ? 'Withdrawal cancelled by user'
-                : 'Withdrawal failed: ' + redeemError.message.slice(0, 50);
-            setToast({ message: msg, type: 'error' });
-            resetRedeem();
-        }
-    }, [redeemError]);
-
-    // Handle on-chain transaction failures
-    useEffect(() => {
-        if (isApproveFailed) {
-            setToast({ message: 'Approval transaction failed on-chain', type: 'error' });
-        }
-    }, [isApproveFailed]);
-
-    useEffect(() => {
-        if (isDepositFailed) {
-            setToast({ message: 'Deposit transaction failed on-chain', type: 'error' });
-        }
-    }, [isDepositFailed]);
-
-    useEffect(() => {
-        if (isRedeemFailed) {
-            setToast({ message: 'Withdrawal transaction failed on-chain', type: 'error' });
-        }
-    }, [isRedeemFailed]);
-
-    const handleAcceptTerms = () => {
-        if (rememberDevice) {
-            localStorage.setItem('jbtci-terms-remembered', 'true');
-        }
-        setHasAcceptedTerms(true);
-        setShowTermsModal(false);
-    };
-
-    const isMainnet = chainId === 8453;
-    const contracts = isMainnet ? CONTRACTS.mainnet : CONTRACTS.testnet;
-    const strategyAddress = contracts.strategy as `0x${string}`;
-    const cbBTCAddress = contracts.cbBTC as `0x${string}`;
-
-    // Read contract data
-    const { data: strategyStatus, refetch: refetchStatus, isLoading: isLoadingStatus } = useReadContract({
-        address: strategyAddress,
-        abi: STRATEGY_ABI,
-        functionName: 'getStrategyStatus',
-    });
-
-    const { data: cbBTCBalance, refetch: refetchCbBTC } = useReadContract({
-        address: cbBTCAddress,
-        abi: ERC20_ABI,
-        functionName: 'balanceOf',
-        args: address ? [address] : undefined,
-    });
-
-    // jBTCi balance (strategy shares)
-    const { data: jBTCiBalance, refetch: refetchJBTCi } = useReadContract({
-        address: strategyAddress,
-        abi: ERC20_ABI,
-        functionName: 'balanceOf',
-        args: address ? [address] : undefined,
-    });
-
-    // Check cbBTC allowance for strategy
-    const { data: allowance, refetch: refetchAllowance } = useReadContract({
-        address: cbBTCAddress,
-        abi: ERC20_ABI,
-        functionName: 'allowance',
-        args: address ? [address, strategyAddress] : undefined,
-    });
-
-    // Share ratio: 1 jBTCi = X BTC
-    const { data: shareRatio } = useReadContract({
-        address: strategyAddress,
-        abi: STRATEGY_ABI,
-        functionName: 'convertToAssets',
-        args: [BigInt(1e8)], // 1 jBTCi in wei (8 decimals)
-    });
-
-    const shareRatioDisplay = shareRatio ? (Number(formatUnits(shareRatio, 8))).toFixed(6) : '1.000000';
-
-    // Allocation percentages from strategy (bug fixed in new testnet deployment Jan 15 2026)
-    const wbtcPercent = strategyStatus ? Number(strategyStatus.wbtcAlloc) / 100 : 50;
-    const cbbtcPercent = strategyStatus ? Number(strategyStatus.cbbtcAlloc) / 100 : 50;
-    const totalHoldings = strategyStatus ? Number(formatUnits(strategyStatus.totalHoldings, 8)) : 0;
-    const depositUsdValue = (parseFloat(depositAmount || '0') * btcPrice);
-
-    // Handle deposit
     const handleDeposit = async () => {
-        if (!address || !depositAmount) return;
+        if (!publicKey) {
+            setTxStatus('error');
+            setTxMessage('Please connect your wallet first');
+            return;
+        }
+        if (!depositAmount) {
+            setTxStatus('error');
+            setTxMessage('Please enter an amount');
+            return;
+        }
+        if (!connected) {
+            setTxStatus('error');
+            setTxMessage('Anchor program not initialized. Try refreshing the page.');
+            console.log('[handleDeposit] Program not connected. publicKey:', publicKey.toString());
+            return;
+        }
+
+        setTxStatus('pending');
+        setTxMessage('Depositing SOL...');
 
         try {
-            const amountWei = parseUnits(depositAmount, 8);
-
-            if (!allowance || allowance < amountWei) {
-                setToast({ message: 'Approving cbBTC (one-time)...', type: 'pending' });
-                // Use max uint256 for infinite approval (one-time)
-                const MAX_UINT256 = BigInt('0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff');
-                approveToken({
-                    address: cbBTCAddress,
-                    abi: ERC20_ABI,
-                    functionName: 'approve',
-                    args: [strategyAddress, MAX_UINT256],
-                } as any);
-                return;
-            }
-
-            setToast({ message: 'Depositing cbBTC...', type: 'pending' });
-            depositAssets({
-                address: strategyAddress,
-                abi: STRATEGY_ABI,
-                functionName: 'deposit',
-                args: [amountWei, address],
-            } as any);
-        } catch (error: unknown) {
-            const errorMessage = error instanceof Error ? error.message : 'Transaction failed';
-            setToast({ message: errorMessage, type: 'error' });
-        }
-    };
-
-    // Handle withdraw
-    const handleWithdraw = async () => {
-        if (!address || !depositAmount) return;
-
-        try {
-            const sharesWei = parseUnits(depositAmount, 8);
-            setToast({ message: 'Withdrawing cbBTC...', type: 'pending' });
-            redeemShares({
-                address: strategyAddress,
-                abi: STRATEGY_ABI,
-                functionName: 'redeem',
-                args: [sharesWei, address, address],
-            } as any);
-        } catch (error: unknown) {
-            const errorMessage = error instanceof Error ? error.message : 'Transaction failed';
-            setToast({ message: errorMessage, type: 'error' });
-        }
-    };
-
-    // Refetch balances after successful transactions
-    // Refetch balances after successful transactions with retry logic
-    // This handles cases where RPC nodes might be slightly out of sync
-    const refetchAll = useCallback(() => {
-        refetchCbBTC();
-        refetchJBTCi();
-        refetchStatus();
-        refetchAllowance();
-    }, [refetchCbBTC, refetchJBTCi, refetchStatus, refetchAllowance]);
-
-    useEffect(() => {
-        if (isDepositSuccess || isRedeemSuccess) {
-            // Immediate refetch
-            refetchAll();
-
-            // Refetch after delays to ensure indexers catch up
-            const t1 = setTimeout(refetchAll, 2000);
-            const t2 = setTimeout(refetchAll, 5000);
-
-            // Clear input and show success message
+            const tx = await deposit(parseFloat(depositAmount));
+            setTxStatus('success');
+            setTxMessage(`Deposit successful! TX: ${tx.slice(0, 8)}...`);
             setDepositAmount('');
-            setToast({
-                message: isDepositSuccess ? 'Deposit successful! Balances updating...' : 'Withdraw successful! Balances updating...',
-                type: 'success'
-            });
 
-            return () => {
-                clearTimeout(t1);
-                clearTimeout(t2);
-            };
+            // Refresh balances
+            if (publicKey) {
+                const newBalance = await connection.getBalance(publicKey);
+                setBalance(newBalance / LAMPORTS_PER_SOL);
+            }
+        } catch (e: any) {
+            setTxStatus('error');
+            setTxMessage(e.message || 'Deposit failed');
+            console.error('[handleDeposit] Error:', e);
         }
-    }, [isDepositSuccess, isRedeemSuccess, refetchAll]);
+    };
 
-    const isLoading = isApproving || isDepositing || isRedeeming || isApproveConfirming || isDepositConfirming || isRedeemConfirming;
+    const handleWithdraw = async () => {
+        if (!publicKey || !depositAmount) return;
 
-    // Terms Modal - Must accept BEFORE seeing tutorial or app
-    if (showTermsModal && !hasAcceptedTerms) {
-        return (
-            <div style={{
-                position: 'fixed',
-                inset: 0,
-                background: 'rgba(0, 0, 0, 0.5)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                zIndex: 9999,
-                padding: '20px'
-            }}>
-                <div style={{
-                    background: 'white',
-                    borderRadius: '24px',
-                    maxWidth: '560px',
-                    width: '100%',
-                    padding: '40px',
-                    boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-                    border: '1px solid rgba(0, 82, 255, 0.1)'
-                }}>
-                    <div style={{ textAlign: 'center', marginBottom: '28px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', marginBottom: '8px' }}>
-                            <Image src="/jubilee-logo-pink.png" alt="Jubilee" width={40} height={40} />
-                            <span style={{ fontSize: '28px', fontWeight: 'bold', color: '#3B3B3B' }}>jBTCi</span>
-                        </div>
-                        <h2 style={{ fontSize: '20px', fontWeight: '600', color: '#0052FF' }}>
-                            Terms of Use
-                        </h2>
-                    </div>
+        setTxStatus('pending');
+        setTxMessage('Withdrawing jSOLi...');
 
-                    <div style={{
-                        background: 'linear-gradient(135deg, rgba(243, 119, 187, 0.08) 0%, rgba(0, 82, 255, 0.08) 100%)',
-                        borderRadius: '16px',
-                        padding: '24px',
-                        marginBottom: '28px',
-                        maxHeight: '320px',
-                        overflowY: 'auto',
-                        fontSize: '13px',
-                        lineHeight: '1.7',
-                        color: '#4B5563',
-                        border: '1px solid rgba(0, 82, 255, 0.1)'
-                    }}>
-                        <p style={{ marginBottom: '16px', fontWeight: '600', color: '#3B3B3B' }}>
-                            By using jBTCi, a product of Jubilee Protocol governed by Hundredfold Foundation and developed by Jubilee Labs, you acknowledge and agree:
-                        </p>
-
-                        <p style={{ marginBottom: '14px' }}>
-                            <strong style={{ color: '#0052FF' }}>(a)</strong> jBTCi is provided on an &quot;AS-IS&quot; and &quot;AS AVAILABLE&quot; basis. Hundredfold Foundation, Jubilee Labs, and their affiliates expressly disclaim all representations, warranties, and conditions of any kind, whether express, implied, or statutory.
-                        </p>
-
-                        <p style={{ marginBottom: '14px' }}>
-                            <strong style={{ color: '#0052FF' }}>(b)</strong> Neither Hundredfold Foundation nor Jubilee Labs makes any warranty that jBTCi will meet your requirements, be available on an uninterrupted, timely, secure, or error-free basis, or be accurate, reliable, or free of harmful code.
-                        </p>
-
-                        <p style={{ marginBottom: '14px' }}>
-                            <strong style={{ color: '#0052FF' }}>(c)</strong> You shall have no claim against Hundredfold Foundation, Jubilee Labs, or their affiliates for any loss arising from your use of jBTCi or Jubilee Protocol products.
-                        </p>
-
-                        <p style={{ marginBottom: '14px' }}>
-                            <strong style={{ color: '#FFA500' }}>(d)</strong> DeFi protocols carry significant risks including: smart contract vulnerabilities, market volatility, oracle failures, and potential total loss of deposited funds.
-                        </p>
-
-                        <p>
-                            <strong style={{ color: '#FFA500' }}>(e)</strong> This is not financial, legal, or tax advice. You are solely responsible for your own investment decisions and due diligence.
-                        </p>
-                    </div>
-
-                    {/* Remember Device Checkbox */}
-                    <label style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '8px',
-                        marginBottom: '16px',
-                        cursor: 'pointer',
-                        fontSize: '14px',
-                        color: '#6B7280'
-                    }}>
-                        <input
-                            type="checkbox"
-                            checked={rememberDevice}
-                            onChange={(e) => setRememberDevice(e.target.checked)}
-                            style={{
-                                width: '18px',
-                                height: '18px',
-                                accentColor: '#0052FF',
-                                cursor: 'pointer'
-                            }}
-                        />
-                        Remember this device
-                    </label>
-
-                    <button
-                        onClick={handleAcceptTerms}
-                        style={{
-                            width: '100%',
-                            padding: '20px 40px',
-                            background: 'linear-gradient(135deg, #0052FF 0%, #003DBF 100%)',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '16px',
-                            fontSize: '20px',
-                            fontWeight: '700',
-                            cursor: 'pointer',
-                            boxShadow: '0 4px 14px rgba(0, 82, 255, 0.4)',
-                            transition: 'all 0.2s ease'
-                        }}
-                    >
-                        I Understand &amp; Accept
-                    </button>
-
-                    <p style={{ textAlign: 'center', marginTop: '16px', fontSize: '11px', color: '#9CA3AF' }}>
-                        By clicking Accept, you agree to the Jubilee Protocol Terms of Service
-                    </p>
-                </div>
-            </div>
-        );
-    }
-
-    // Tutorial Modal - Shows for first-time visitors AFTER accepting terms
-    if (showTutorial) {
-        return (
-            <TutorialModal
-                isOpen={showTutorial}
-                onClose={completeTutorial}
-                theme={theme}
-                btcPrice={btcPrice}
-            />
-        );
-    }
+        try {
+            const tx = await withdraw(parseFloat(depositAmount));
+            setTxStatus('success');
+            setTxMessage(`Withdraw successful! TX: ${tx.slice(0, 8)}...`);
+            setDepositAmount('');
+        } catch (e: any) {
+            setTxStatus('error');
+            setTxMessage(e.message || 'Withdraw failed');
+        }
+    };
 
     return (
-        <>
-            {/* CSS for animations */}
-            <style jsx global>{`
-                @keyframes spin {
-                    to { transform: rotate(360deg); }
-                }
-                @keyframes slideIn {
-                    from { transform: translateX(100%); opacity: 0; }
-                    to { transform: translateX(0); opacity: 1; }
-                }
-                @keyframes shimmer {
-                    0% { background-position: -200% 0; }
-                    100% { background-position: 200% 0; }
-                }
-            `}</style>
-
-            {/* Toast notifications */}
-            {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
-
-            {/* FASB Dashboard Modal */}
-            <FASBDashboard
-                isOpen={showFASBDashboard}
-                onClose={() => setShowFASBDashboard(false)}
-                theme={theme}
-                btcPrice={btcPrice}
-            />
-
-            {/* Treasury Mode Modal */}
-            <TreasuryMode
-                isOpen={showTreasuryMode}
-                onClose={() => setShowTreasuryMode(false)}
-                theme={theme}
-            />
-
-            {/* Onramp Modal - Buy cbBTC with Apple Pay, Google Pay, etc */}
-            <OnrampModal
-                isOpen={showOnramp}
-                onClose={() => setShowOnramp(false)}
-                theme={theme}
-                btcPrice={btcPrice}
-            />
-
-            <main style={getGradientStyle(theme)} className="flex flex-col">
-                {/* Header */}
-                <header style={{
-                    padding: '20px 24px',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center'
-                }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                        <Image src="/jubilee-logo-pink.png" alt="Jubilee" width={32} height={32} />
-                        <span style={{ fontSize: '22px', fontWeight: 'bold', color: c.text }}>jBTCi</span>
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'nowrap' }}>
-                        {/* Reports button - icon only on mobile */}
-                        {isConnected && (
+        <main style={getGradientStyle(theme)} className="flex flex-col">
+            {/* Header */}
+            <header style={{ padding: '20px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <Image src="/jubilee-logo-pink.png" alt="Jubilee" width={32} height={32} />
+                    <span style={{ fontSize: '22px', fontWeight: 'bold', color: c.text }}>jSOLi</span>
+                </div>
+                <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                    {mounted && (
+                        <>
+                            {/* Theme Toggle */}
                             <button
-                                onClick={() => setShowFASBDashboard(true)}
+                                onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')}
                                 style={{
-                                    background: theme === 'dark' ? '#1a1a2e' : '#F3F4F6',
+                                    background: theme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)',
                                     border: 'none',
+                                    cursor: 'pointer',
+                                    fontSize: '20px',
+                                    width: '44px',
+                                    height: '44px',
                                     borderRadius: '50%',
-                                    width: '36px',
-                                    height: '36px',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
-                                    cursor: 'pointer',
-                                    fontSize: '16px',
                                 }}
-                                title="FASB Fair Value Reports"
+                                suppressHydrationWarning
                             >
-                                📊
+                                {theme === 'dark' ? '☀️' : '🌙'}
                             </button>
-                        )}
-                        {/* Dark mode toggle */}
-                        <button
-                            onClick={toggleTheme}
-                            style={{
-                                background: theme === 'dark' ? '#1a1a2e' : '#F3F4F6',
-                                border: 'none',
-                                borderRadius: '50%',
-                                width: '36px',
-                                height: '36px',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                cursor: 'pointer',
-                                fontSize: '16px'
-                            }}
-                            title={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
-                        >
-                            {theme === 'light' ? '🌙' : '☀️'}
-                        </button>
-                        {/* Treasury Mode button - icon only on mobile */}
-                        <button
-                            onClick={() => setShowTreasuryMode(true)}
-                            style={{
-                                background: theme === 'dark' ? '#1a1a2e' : '#F3F4F6',
-                                border: 'none',
-                                borderRadius: '50%',
-                                width: '36px',
-                                height: '36px',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                cursor: 'pointer',
-                                fontSize: '16px',
-                            }}
-                            title="Treasury Mode for Organizations"
-                        >
-                            🏛️
-                        </button>
-                        {/* Connect Wallet */}
-                        <ConnectButton />
-                    </div>
-                </header>
-
-                {/* Main Content */}
-                <div className="flex-1 flex items-center justify-center px-6 py-8">
-                    <div className="w-full max-w-[480px]">
-                        {/* Card */}
-                        <div style={{
-                            background: c.card,
-                            borderRadius: '16px',
-                            padding: '32px',
-                            boxShadow: '0 4px 24px rgba(0, 82, 255, 0.08)',
-                            border: `1px solid ${c.cardBorder}`
-                        }}>
-                            {/* Maintenance Mode Banner */}
-                            {isMaintenanceMode && (
-                                <div style={{
-                                    background: 'linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%)',
-                                    border: '1px solid #F59E0B',
-                                    borderRadius: '12px',
-                                    padding: '16px',
-                                    marginBottom: '24px',
-                                    display: 'flex',
-                                    alignItems: 'flex-start',
-                                    gap: '12px'
-                                }}>
-                                    <span style={{ fontSize: '20px' }}>🔧</span>
-                                    <div>
-                                        <div style={{ fontWeight: '600', color: '#92400E', marginBottom: '4px' }}>
-                                            Scheduled Maintenance
-                                        </div>
-                                        <div style={{ fontSize: '13px', color: '#A16207', lineHeight: '1.4' }}>
-                                            {MAINTENANCE_MESSAGE}
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* Tabs */}
-                            <div style={{ display: 'flex', gap: '32px', marginBottom: '32px', borderBottom: `1px solid ${c.cardBorder}`, paddingBottom: '16px' }}>
-                                <button
-                                    onClick={() => setActiveTab('deposit')}
-                                    style={{
-                                        fontSize: '18px',
-                                        fontWeight: '600',
-                                        color: activeTab === 'deposit' ? '#0052FF' : c.textLight,
-                                        background: 'none',
-                                        border: 'none',
-                                        cursor: 'pointer'
-                                    }}
-                                >
-                                    Deposit
-                                </button>
-                                <button
-                                    onClick={() => setActiveTab('withdraw')}
-                                    style={{
-                                        fontSize: '18px',
-                                        fontWeight: '600',
-                                        color: activeTab === 'withdraw' ? '#0052FF' : c.textLight,
-                                        background: 'none',
-                                        border: 'none',
-                                        cursor: 'pointer'
-                                    }}
-                                >
-                                    Withdraw
-                                </button>
-                                {/* History toggle */}
-                                {isConnected && (
-                                    <button
-                                        onClick={() => setShowHistory(!showHistory)}
-                                        style={{
-                                            marginLeft: 'auto',
-                                            fontSize: '14px',
-                                            color: showHistory ? '#0052FF' : c.textLight,
-                                            background: 'none',
-                                            border: 'none',
-                                            cursor: 'pointer'
-                                        }}
-                                    >
-                                        History
-                                    </button>
-                                )}
-                            </div>
-
-                            {/* Transaction History Panel */}
-                            {showHistory && isConnected && (
-                                <div style={{
-                                    marginBottom: '24px',
-                                    padding: '16px',
-                                    background: c.inputBg,
-                                    borderRadius: '12px',
-                                    maxHeight: '200px',
-                                    overflowY: 'auto'
-                                }}>
-                                    <div style={{ fontSize: '14px', fontWeight: '600', color: c.text, marginBottom: '12px' }}>
-                                        Recent Transactions
-                                    </div>
-                                    {txHistory.length === 0 ? (
-                                        <div style={{ fontSize: '13px', color: c.textMuted }}>No transactions yet</div>
-                                    ) : (
-                                        txHistory.map((tx, i) => (
-                                            <div key={i} style={{
-                                                display: 'flex',
-                                                justifyContent: 'space-between',
-                                                alignItems: 'center',
-                                                padding: '10px 0',
-                                                borderBottom: i < txHistory.length - 1 ? `1px solid ${c.cardBorder}` : 'none'
-                                            }}>
-                                                <div>
-                                                    <span style={{
-                                                        color: tx.type === 'deposit' ? '#22C55E' : '#F59E0B',
-                                                        fontWeight: '500',
-                                                        fontSize: '13px'
-                                                    }}>
-                                                        {tx.type === 'deposit' ? '↓ Deposit' : '↑ Withdraw'}
-                                                    </span>
-                                                    <span style={{ marginLeft: '8px', color: c.text, fontSize: '13px' }}>
-                                                        {tx.amount} BTC
-                                                    </span>
-                                                </div>
-                                                <a
-                                                    href={`https://basescan.org/tx/${tx.hash}`}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    style={{ color: '#0052FF', fontSize: '12px' }}
-                                                >
-                                                    View ↗
-                                                </a>
-                                            </div>
-                                        ))
-                                    )}
-                                </div>
-                            )}
-
-                            {/* Input Section */}
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                                {/* Input Token */}
-                                <div style={{ background: c.inputBg, borderRadius: '16px', padding: '20px' }}>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px', color: c.textMuted, marginBottom: '16px' }}>
-                                        <span>{activeTab === 'deposit' ? 'You deposit' : 'You withdraw'}</span>
-                                        <span>
-                                            Balance: <span style={{ color: c.text, fontWeight: '500' }}>
-                                                {activeTab === 'deposit'
-                                                    ? (cbBTCBalance ? parseFloat(formatUnits(cbBTCBalance, 8)).toFixed(4) : '0.00')
-                                                    : (jBTCiBalance ? parseFloat(formatUnits(jBTCiBalance, 8)).toFixed(4) : '0.00')
-                                                }
-                                            </span>
-                                        </span>
-                                    </div>
-                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                        <input
-                                            type="text"
-                                            inputMode="decimal"
-                                            placeholder="0"
-                                            value={depositAmount}
-                                            onChange={(e) => setDepositAmount(e.target.value)}
-                                            style={{
-                                                fontSize: '28px',
-                                                fontWeight: '600',
-                                                background: 'transparent',
-                                                border: 'none',
-                                                outline: 'none',
-                                                width: '100%',
-                                                color: c.text
-                                            }}
-                                        />
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
-                                            <button
-                                                onClick={() => {
-                                                    const balance = activeTab === 'deposit' ? cbBTCBalance : jBTCiBalance;
-                                                    setDepositAmount(balance ? formatUnits(balance, 8) : '0');
-                                                }}
-                                                style={{ color: '#0052FF', fontSize: '14px', fontWeight: '500', background: 'none', border: 'none', cursor: 'pointer' }}
-                                            >
-                                                Max
-                                            </button>
-                                            {activeTab === 'deposit' ? (
-                                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', background: '#DBEAFE', borderRadius: '20px', padding: '6px 12px' }}>
-                                                    <div style={{ width: '20px', height: '20px', background: '#0052FF', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                                        <span style={{ color: 'white', fontSize: '9px', fontWeight: 'bold' }}>cb</span>
-                                                    </div>
-                                                    <span style={{ color: '#3B3B3B', fontSize: '14px', fontWeight: '500' }}>cbBTC</span>
-                                                </div>
-                                            ) : (
-                                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', background: '#FEF3C7', borderRadius: '20px', padding: '6px 12px' }}>
-                                                    <div style={{ width: '20px', height: '20px', background: '#FFA500', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                                        <span style={{ color: 'white', fontSize: '9px', fontWeight: 'bold' }}>j</span>
-                                                    </div>
-                                                    <span style={{ color: '#3B3B3B', fontSize: '14px', fontWeight: '500' }}>jBTCi</span>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                    <div style={{ fontSize: '14px', color: c.textLight, marginTop: '12px' }}>≈ ${depositUsdValue.toLocaleString()}</div>
-                                </div>
-
-                                {/* Arrow - Click to toggle */}
-                                <div style={{ display: 'flex', justifyContent: 'center', margin: '-4px 0' }}>
-                                    <button
-                                        onClick={() => setActiveTab(activeTab === 'deposit' ? 'withdraw' : 'deposit')}
-                                        style={{
-                                            background: c.card,
-                                            border: `1px solid ${c.cardBorder}`,
-                                            borderRadius: '50%',
-                                            padding: '12px',
-                                            boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-                                            cursor: 'pointer'
-                                        }}
-                                    >
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={c.text} strokeWidth="2">
-                                            <line x1="12" y1="5" x2="12" y2="19" />
-                                            <polyline points="19 12 12 19 5 12" />
-                                        </svg>
-                                    </button>
-                                </div>
-
-                                {/* Output Token */}
-                                <div style={{ background: c.inputBg, borderRadius: '16px', padding: '20px' }}>
-                                    <div style={{ fontSize: '14px', color: c.textMuted, marginBottom: '16px' }}>You receive</div>
-                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                        <span style={{ fontSize: '28px', fontWeight: '600', color: c.text }}>{depositAmount || '0'}</span>
-                                        {activeTab === 'deposit' ? (
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: '#FEF3C7', borderRadius: '20px', padding: '8px 16px' }}>
-                                                <div style={{ width: '24px', height: '24px', background: '#FFA500', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                                    <span style={{ color: 'white', fontSize: '10px', fontWeight: 'bold' }}>j</span>
-                                                </div>
-                                                <span style={{ color: '#3B3B3B', fontSize: '14px', fontWeight: '500' }}>jBTCi</span>
-                                            </div>
-                                        ) : (
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: '#DBEAFE', borderRadius: '20px', padding: '8px 16px' }}>
-                                                <div style={{ width: '24px', height: '24px', background: '#0052FF', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                                    <span style={{ color: 'white', fontSize: '10px', fontWeight: 'bold' }}>cb</span>
-                                                </div>
-                                                <span style={{ color: '#3B3B3B', fontSize: '14px', fontWeight: '500' }}>cbBTC</span>
-                                            </div>
-                                        )}
-                                    </div>
-                                    {/* Share Ratio Display */}
-                                    <div style={{ fontSize: '14px', color: c.textLight, marginTop: '12px' }}>
-                                        1 jBTCi = {shareRatioDisplay} BTC
-                                    </div>
-                                </div>
-
-                                {/* Min deposit + Get cbBTC hint */}
-                                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: c.textLight, padding: '0 8px' }}>
-                                    <span>Min. deposit: {MIN_DEPOSIT_BTC} BTC ≈ ${(MIN_DEPOSIT_BTC * btcPrice).toLocaleString()}</span>
-                                    <button
-                                        onClick={() => setShowOnramp(true)}
-                                        style={{
-                                            color: '#0052FF',
-                                            textDecoration: 'underline',
-                                            background: 'none',
-                                            border: 'none',
-                                            cursor: 'pointer',
-                                            fontSize: '12px',
-                                            padding: 0,
-                                        }}
-                                    >
-                                        Get cbBTC →
-                                    </button>
-                                </div>
-                                <div style={{ fontSize: '10px', color: c.textLight, opacity: 0.7, textAlign: 'center', marginTop: '4px' }}>
-                                    Price by <a href="https://www.coingecko.com/" target="_blank" rel="noopener noreferrer" style={{ color: c.textLight, textDecoration: 'underline' }}>CoinGecko</a>
-                                </div>
-
-                                {/* Gas-Free Banner for Coinbase Smart Wallet */}
-                                {isGasFree && activeTab === 'deposit' && (
-                                    <div style={{
-                                        background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
-                                        color: 'white',
-                                        padding: '8px 12px',
-                                        borderRadius: '8px',
-                                        fontSize: '12px',
-                                        fontWeight: 600,
-                                        textAlign: 'center',
-                                        marginTop: '8px',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        gap: '6px',
-                                    }}>
-                                        ⚡ Gas-Free Deposits with Coinbase Wallet
-                                    </div>
-                                )}
-                                {/* Action Button */}
-                                {!isConnected ? (
-                                    <div style={{ width: '100%' }}>
-                                        <ConnectButton.Custom>
-                                            {({ openConnectModal }) => (
-                                                <button
-                                                    onClick={openConnectModal}
-                                                    style={{
-                                                        width: '100%',
-                                                        padding: '18px',
-                                                        marginTop: '8px',
-                                                        borderRadius: '50px',
-                                                        fontSize: '18px',
-                                                        fontWeight: '600',
-                                                        background: 'linear-gradient(135deg, #0052FF 0%, #003DBF 100%)',
-                                                        color: 'white',
-                                                        border: 'none',
-                                                        cursor: 'pointer',
-                                                        boxShadow: '0 4px 14px rgba(0, 82, 255, 0.3)'
-                                                    }}
-                                                >
-                                                    Connect Wallet
-                                                </button>
-                                            )}
-                                        </ConnectButton.Custom>
-                                    </div>
-                                ) : (
-                                    <button
-                                        onClick={activeTab === 'deposit' ? handleDeposit : handleWithdraw}
-                                        disabled={isLoading || !depositAmount || parseFloat(depositAmount) <= 0 || isMaintenanceMode}
-                                        style={{
-                                            width: '100%',
-                                            padding: '18px',
-                                            marginTop: '8px',
-                                            borderRadius: '50px',
-                                            fontSize: '18px',
-                                            fontWeight: '600',
-                                            background: (depositAmount && parseFloat(depositAmount) > 0 && !isLoading)
-                                                ? 'linear-gradient(135deg, #0052FF 0%, #003DBF 100%)'
-                                                : theme === 'dark' ? '#2a2a3e' : '#E5E7EB',
-                                            color: (depositAmount && parseFloat(depositAmount) > 0 && !isLoading) ? 'white' : c.textLight,
-                                            border: 'none',
-                                            cursor: (depositAmount && parseFloat(depositAmount) > 0 && !isLoading) ? 'pointer' : 'not-allowed',
-                                            boxShadow: (depositAmount && parseFloat(depositAmount) > 0 && !isLoading) ? '0 4px 14px rgba(0, 82, 255, 0.3)' : 'none',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            gap: '8px'
-                                        }}
-                                    >
-                                        {isLoading && (
-                                            <div style={{
-                                                width: '18px',
-                                                height: '18px',
-                                                border: '2px solid currentColor',
-                                                borderTopColor: 'transparent',
-                                                borderRadius: '50%',
-                                                animation: 'spin 1s linear infinite'
-                                            }} />
-                                        )}
-                                        {isLoading
-                                            ? 'Processing...'
-                                            : (depositAmount && parseFloat(depositAmount) > 0
-                                                ? (activeTab === 'deposit'
-                                                    ? (isGasFree ? '⚡ Deposit cbBTC (Gas-Free!)' : 'Deposit cbBTC')
-                                                    : 'Withdraw cbBTC')
-                                                : 'Enter an amount'
-                                            )
-                                        }
-                                    </button>
-                                )}
-                            </div>
-                        </div>
-
-                        {/* Stats Row */}
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px', marginTop: '24px' }}>
-                            <div style={{ background: c.card, borderRadius: '12px', padding: '12px', textAlign: 'center', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', border: `1px solid ${c.cardBorder}` }}>
-                                <div style={{ fontSize: '10px', color: c.textLight, textTransform: 'uppercase', marginBottom: '4px' }}>TVL</div>
-                                <div style={{ fontSize: '14px', fontWeight: '600', color: c.text }}>
-                                    {isLoadingStatus ? <Skeleton width="50px" /> : totalHoldings.toFixed(2)}
-                                </div>
-                            </div>
-                            <div style={{ background: c.card, borderRadius: '12px', padding: '12px', textAlign: 'center', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', border: `1px solid ${c.cardBorder}` }}>
-                                <div style={{ fontSize: '10px', color: c.textLight, textTransform: 'uppercase', marginBottom: '4px' }}>APY</div>
-                                <div style={{ fontSize: '14px', fontWeight: '600', color: '#0052FF' }}>6-10%</div>
-                            </div>
-                            <div style={{ background: c.card, borderRadius: '12px', padding: '12px', textAlign: 'center', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', border: `1px solid ${c.cardBorder}` }}>
-                                <div style={{ fontSize: '10px', color: c.textLight, textTransform: 'uppercase', marginBottom: '4px' }}>WBTC</div>
-                                <div style={{ fontSize: '14px', fontWeight: '600', color: '#FFA500' }}>
-                                    {isLoadingStatus ? <Skeleton width="40px" /> : `${wbtcPercent.toFixed(0)}%`}
-                                </div>
-                            </div>
-                            <div style={{ background: c.card, borderRadius: '12px', padding: '12px', textAlign: 'center', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', border: `1px solid ${c.cardBorder}` }}>
-                                <div style={{ fontSize: '10px', color: c.textLight, textTransform: 'uppercase', marginBottom: '4px' }}>cbBTC</div>
-                                <div style={{ fontSize: '14px', fontWeight: '600', color: '#0052FF' }}>
-                                    {isLoadingStatus ? <Skeleton width="40px" /> : `${cbbtcPercent.toFixed(0)}%`}
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* User Balances */}
-                        {isConnected && (
-                            <div style={{ display: 'flex', justifyContent: 'center', gap: '24px', marginTop: '16px', fontSize: '13px', color: c.textMuted }}>
-                                <span>
-                                    Your cbBTC: <strong style={{ color: '#0052FF' }}>{cbBTCBalance ? parseFloat(formatUnits(cbBTCBalance, 8)).toFixed(4) : '0'}</strong>
-                                </span>
-                                <span>
-                                    Your jBTCi: <strong style={{ color: '#FFA500' }}>{jBTCiBalance ? parseFloat(formatUnits(jBTCiBalance, 8)).toFixed(4) : '0'}</strong>
-                                </span>
-                            </div>
-                        )}
-
-                        {/* Status & Links */}
-                        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '20px', marginTop: '20px', fontSize: '14px', flexWrap: 'wrap' }}>
-                            <span style={{ color: isMaintenanceMode ? '#F59E0B' : (strategyStatus?.isPaused ? '#EF4444' : '#22C55E') }}>
-                                ● {isMaintenanceMode ? 'Maintenance' : (strategyStatus?.isPaused ? 'Paused' : 'Active')}
-                            </span>
-                            <a href="https://basescan.org/address/0x27143095013184e718f92330C32A3D2eE9974053" target="_blank" rel="noopener noreferrer" style={{ color: c.textLight }}>
-                                Contract ↗
-                            </a>
-                            <a href="https://github.com/Jubilee-Protocol/jBTCi-on-Base/blob/main/docs/AUDIT_REPORT.md" target="_blank" rel="noopener noreferrer" style={{ color: c.textLight }}>
-                                Audit ↗
-                            </a>
-                            <a href="https://github.com/Jubilee-Protocol/jBTCi-on-Base/blob/main/docs/FAQ.md" target="_blank" rel="noopener noreferrer" style={{ color: c.textLight }}>
-                                FAQ ↗
-                            </a>
-                            <a href="https://github.com/Jubilee-Protocol/jBTCi-on-Base#readme" target="_blank" rel="noopener noreferrer" style={{ color: c.textLight }}>
-                                Learn More ↗
-                            </a>
+                            {/* Treasury Button */}
                             <button
-                                onClick={reopenTutorial}
+                                onClick={() => setShowTreasury(true)}
+                                style={{
+                                    background: theme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)',
+                                    border: 'none',
+                                    cursor: 'pointer',
+                                    fontSize: '20px',
+                                    width: '44px',
+                                    height: '44px',
+                                    borderRadius: '50%',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                }}
+                                title="Treasury Mode"
+                            >
+                                🏛️
+                            </button>
+                            <WalletMultiButton />
+                        </>
+                    )}
+                </div>
+            </header>
+
+            {/* Stats Bar */}
+            <div style={{
+                display: 'flex',
+                justifyContent: 'center',
+                gap: '48px',
+                padding: '16px 24px',
+                background: c.accentLight,
+                borderBottom: `1px solid ${c.cardBorder}`
+            }}>
+                <div style={{ textAlign: 'center' }}>
+                    <div style={{ color: c.textMuted, fontSize: '12px', fontWeight: '600', textTransform: 'uppercase' }}>TVL</div>
+                    <div style={{ color: c.text, fontSize: '18px', fontWeight: '700' }}>{tvl.toLocaleString()} SOL</div>
+                </div>
+                <div style={{ textAlign: 'center' }}>
+                    <div style={{ color: c.textMuted, fontSize: '12px', fontWeight: '600', textTransform: 'uppercase' }}>Est. APY</div>
+                    <div style={{ color: '#14F195', fontSize: '18px', fontWeight: '700' }}>{apy.toFixed(1)}%</div>
+                </div>
+                <div style={{ textAlign: 'center' }}>
+                    <div style={{ color: c.textMuted, fontSize: '12px', fontWeight: '600', textTransform: 'uppercase' }}>Your jSOLi</div>
+                    <div style={{ color: c.text, fontSize: '18px', fontWeight: '700' }}>{jsoliBalance.toFixed(4)}</div>
+                </div>
+            </div>
+
+            {/* Main Content */}
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 20px' }}>
+                <div style={{
+                    background: c.card,
+                    borderRadius: '24px',
+                    padding: '32px',
+                    width: '100%',
+                    maxWidth: '480px',
+                    boxShadow: '0 20px 60px -10px rgba(153, 69, 255, 0.15)',
+                    border: `1px solid ${c.cardBorder}`
+                }}>
+                    <h1 style={{ fontSize: '24px', fontWeight: '600', color: c.text, marginBottom: '8px', textAlign: 'center' }}>
+                        Solana Staking Index
+                    </h1>
+                    <p style={{ color: c.textMuted, fontSize: '14px', textAlign: 'center', marginBottom: '24px' }}>
+                        Diversified yield across top LST protocols
+                    </p>
+
+                    {/* Tabs */}
+                    <div style={{ display: 'flex', background: c.inputBg, borderRadius: '12px', padding: '4px', marginBottom: '24px' }}>
+                        {['deposit', 'withdraw'].map((tab) => (
+                            <button
+                                key={tab}
+                                onClick={() => setActiveTab(tab as any)}
+                                style={{
+                                    flex: 1,
+                                    padding: '10px',
+                                    borderRadius: '10px',
+                                    border: 'none',
+                                    background: activeTab === tab ? c.card : 'transparent',
+                                    color: activeTab === tab ? c.accent : c.textMuted,
+                                    fontWeight: '600',
+                                    cursor: 'pointer',
+                                    boxShadow: activeTab === tab ? '0 4px 12px rgba(153, 69, 255, 0.1)' : 'none',
+                                    transition: 'all 0.2s ease'
+                                }}
+                            >
+                                {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                            </button>
+                        ))}
+                    </div>
+
+                    {/* Input */}
+                    <div style={{ marginBottom: '24px' }}>
+                        <div style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            marginBottom: '8px',
+                            color: c.textMuted,
+                            fontSize: '14px'
+                        }}>
+                            <span>{activeTab === 'deposit' ? 'Deposit Amount' : 'Withdraw Amount'}</span>
+                            <span>Balance: {activeTab === 'deposit' ? balance.toFixed(4) : jsoliBalance.toFixed(4)} {activeTab === 'deposit' ? 'SOL' : 'jSOLi'}</span>
+                        </div>
+                        <div style={{
+                            background: c.inputBg,
+                            borderRadius: '16px',
+                            padding: '16px',
+                            border: `1px solid ${c.cardBorder}`,
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '12px'
+                        }}>
+                            <input
+                                type="number"
+                                value={depositAmount}
+                                onChange={(e) => setDepositAmount(e.target.value)}
+                                placeholder="0.00"
                                 style={{
                                     background: 'transparent',
                                     border: 'none',
-                                    color: c.textLight,
-                                    cursor: 'pointer',
-                                    fontSize: '14px',
-                                    padding: 0,
+                                    fontSize: '24px',
+                                    fontWeight: '600',
+                                    color: c.text,
+                                    width: '100%',
+                                    outline: 'none'
                                 }}
-                            >
-                                📚 Tutorial
-                            </button>
-                            <a
-                                href="mailto:contact@jubileeprotocol.xyz"
-                                title="Contact us for support"
-                                style={{
-                                    display: 'inline-flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    width: '24px',
-                                    height: '24px',
-                                    borderRadius: '50%',
-                                    background: 'linear-gradient(135deg, #E040FB 0%, #7C4DFF 100%)',
-                                    color: 'white',
+                            />
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <div style={{
+                                    background: c.accentLight,
+                                    borderRadius: '8px',
+                                    padding: '4px 8px',
+                                    color: c.accent,
+                                    fontWeight: '600',
                                     fontSize: '14px',
-                                    fontWeight: '700',
-                                    textDecoration: 'none',
-                                    marginLeft: '4px'
-                                }}
-                            >
-                                ✉
-                            </a>
+                                    cursor: 'pointer'
+                                }} onClick={() => setDepositAmount(activeTab === 'deposit' ? balance.toString() : jsoliBalance.toString())}>
+                                    MAX
+                                </div>
+                                <span style={{ fontWeight: '600', color: c.text }}>{activeTab === 'deposit' ? 'SOL' : 'jSOLi'}</span>
+                            </div>
                         </div>
+
+                        {/* Min deposit info + Get SOL (only for deposit tab) */}
+                        {activeTab === 'deposit' && (
+                            <div style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                marginTop: '12px',
+                                fontSize: '13px',
+                            }}>
+                                <span style={{ color: c.textMuted }}>
+                                    Min. deposit: {minDepositSOL} SOL ≈ {minDepositUSD}
+                                </span>
+                                <a
+                                    href="https://www.coinbase.com/price/solana"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    style={{
+                                        color: c.accent,
+                                        textDecoration: 'none',
+                                        fontWeight: '500',
+                                    }}
+                                >
+                                    Get SOL →
+                                </a>
+                            </div>
+                        )}
+
+                        {/* Price attribution */}
+                        {activeTab === 'deposit' && solPrice > 0 && (
+                            <div style={{
+                                textAlign: 'center',
+                                marginTop: '8px',
+                                fontSize: '11px',
+                                color: c.textLight,
+                            }}>
+                                Price by <a href="https://www.coingecko.com/en/coins/solana" target="_blank" rel="noopener noreferrer" style={{ color: c.textLight, textDecoration: 'underline' }}>CoinGecko</a>
+                            </div>
+                        )}
                     </div>
+
+                    {/* Status Message */}
+                    {txStatus !== 'idle' && (
+                        <div style={{
+                            padding: '12px 16px',
+                            borderRadius: '12px',
+                            marginBottom: '16px',
+                            background: txStatus === 'success' ? 'rgba(20, 241, 149, 0.1)' : txStatus === 'error' ? 'rgba(255, 100, 100, 0.1)' : c.accentLight,
+                            color: txStatus === 'success' ? '#14F195' : txStatus === 'error' ? '#FF6464' : c.accent,
+                            fontSize: '14px',
+                            textAlign: 'center'
+                        }}>
+                            {txMessage}
+                        </div>
+                    )}
+
+                    {/* Action Button */}
+                    <button
+                        onClick={activeTab === 'deposit' ? handleDeposit : handleWithdraw}
+                        disabled={!publicKey || !depositAmount || loading}
+                        style={{
+                            width: '100%',
+                            padding: '20px',
+                            borderRadius: '16px',
+                            border: 'none',
+                            background: publicKey ? `linear-gradient(135deg, ${c.accent} 0%, #14F195 100%)` : '#E5E7EB',
+                            color: publicKey ? 'white' : '#9CA3AF',
+                            fontSize: '18px',
+                            fontWeight: '700',
+                            cursor: publicKey && !loading ? 'pointer' : 'not-allowed',
+                            transition: 'all 0.2s ease',
+                            opacity: loading ? 0.7 : 1
+                        }}
+                    >
+                        {loading ? 'Processing...' : (publicKey
+                            ? (activeTab === 'deposit' ? 'Deposit SOL' : 'Withdraw jSOLi')
+                            : 'Connect Wallet')}
+                    </button>
+
+                    {!connected && mounted && (
+                        <div style={{ marginTop: '16px', textAlign: 'center' }}>
+                            <WalletMultiButton style={{ width: '100%', justifyContent: 'center' }} />
+                        </div>
+                    )}
                 </div>
 
-                {/* Footer */}
-                <footer style={{ padding: '24px', textAlign: 'center', fontSize: '14px', color: c.textLight }}>
-                    2026 © Jubilee Protocol · Governed by Hundredfold Foundation
-                </footer>
-            </main>
-        </>
+                {/* Allocation Display */}
+                <div style={{
+                    marginTop: '24px',
+                    background: c.card,
+                    borderRadius: '16px',
+                    padding: '20px',
+                    width: '100%',
+                    maxWidth: '480px',
+                    border: `1px solid ${c.cardBorder}`
+                }}>
+                    <h3 style={{ color: c.text, fontSize: '14px', fontWeight: '600', marginBottom: '16px' }}>
+                        Protocol Allocations
+                    </h3>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        {ALLOCATIONS.map((a) => (
+                            <div key={a.protocol} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                <div style={{
+                                    width: '8px',
+                                    height: '8px',
+                                    borderRadius: '50%',
+                                    background: a.color
+                                }} />
+                                <span style={{ color: c.text, fontSize: '14px', flex: 1 }}>{a.protocol}</span>
+                                <span style={{ color: c.textMuted, fontSize: '14px' }}>{a.percentage}%</span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
+            {/* Footer */}
+            <footer style={{ padding: '20px 24px', textAlign: 'center', borderTop: `1px solid ${c.cardBorder}` }}>
+                {/* Access Links Bar */}
+                <AccessLinks
+                    theme={theme}
+                    isPaused={isPaused}
+                    onTutorialClick={reopenTutorial}
+                    onTreasuryClick={() => setShowTreasury(true)}
+                />
+
+                <p style={{ color: c.textLight, fontSize: '12px' }}>
+                    © 2026 Jubilee Protocol. All rights reserved.
+                </p>
+            </footer>
+
+            {/* Modals */}
+            {mounted && (
+                <>
+                    <TermsModal
+                        isOpen={showTerms}
+                        onAccept={() => acceptTerms(true)}
+                        theme={theme}
+                    />
+                    <TutorialModal
+                        isOpen={showTutorial}
+                        onClose={completeTutorial}
+                        theme={theme}
+                        solPrice={solPrice}
+                    />
+                    <TreasuryModal
+                        isOpen={showTreasury}
+                        onClose={() => setShowTreasury(false)}
+                        theme={theme}
+                    />
+                </>
+            )}
+        </main>
     );
 }

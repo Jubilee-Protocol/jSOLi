@@ -1,27 +1,27 @@
-import '@rainbow-me/rainbowkit/styles.css';
 import { Providers } from './providers';
 import './globals.css';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: 'jBTCi | Bitcoin Index Fund on Base',
-    description: 'The first Bitcoin Index Fund on Base. Earn yield on diversified BTC exposure through cbBTC and WBTC via Yearn V3.',
-    keywords: ['jBTCi', 'Bitcoin', 'Index Fund', 'Base', 'DeFi', 'Yearn', 'cbBTC', 'WBTC'],
+    metadataBase: new URL('https://mint.jsoli.xyz'),
+    title: 'jSOLi | Solana Staking Index',
+    description: 'The first Solana Staking Index. Earn yield on diversified SOL exposure through Marinade, Jito, and BlazeStake.',
+    keywords: ['jSOLi', 'Solana', 'Index Fund', 'LST', 'DeFi', 'Marinade', 'Jito', 'BlazeStake'],
     icons: {
         icon: '/jubilee-logo-pink.png',
         apple: '/jubilee-logo-pink.png',
     },
     openGraph: {
-        title: 'jBTCi | Bitcoin Index Fund on Base',
-        description: 'The first Bitcoin Index Fund on Base. Earn 6-10% APY on diversified BTC exposure.',
-        url: 'https://mint.jbtci.xyz',
-        siteName: 'jBTCi',
+        title: 'jSOLi | Solana Staking Index',
+        description: 'The first Solana Staking Index. Earn ~7% APY on diversified SOL exposure.',
+        url: 'https://mint.jsoli.xyz',
+        siteName: 'jSOLi',
         images: [
             {
-                url: 'https://mint.jbtci.xyz/og-image.png',
+                url: 'https://mint.jsoli.xyz/og-image.png',
                 width: 625,
                 height: 625,
-                alt: 'jBTCi - Bitcoin Index Fund',
+                alt: 'jSOLi - Solana Staking Index',
             },
         ],
         locale: 'en_US',
@@ -29,26 +29,9 @@ export const metadata: Metadata = {
     },
     twitter: {
         card: 'summary_large_image',
-        title: 'jBTCi | Bitcoin Index Fund on Base',
-        description: 'The first Bitcoin Index Fund on Base. Earn 6-10% APY on diversified BTC exposure.',
-        images: ['https://mint.jbtci.xyz/og-image.png'],
-    },
-    other: {
-        'base:app_id': '6960e2c68a6eeb04b568d951',
-        'fc:miniapp': JSON.stringify({
-            version: 'next',
-            imageUrl: 'https://mint.jbtci.xyz/og-image.png',
-            button: {
-                title: 'Open jBTCi',
-                action: {
-                    type: 'launch_frame',
-                    url: 'https://mint.jbtci.xyz',
-                    name: 'jBTCi - Bitcoin Index',
-                    splashImageUrl: 'https://mint.jbtci.xyz/splash.png',
-                    splashBackgroundColor: '#0a0a1a'
-                }
-            }
-        }),
+        title: 'jSOLi | Solana Staking Index',
+        description: 'The first Solana Staking Index. Earn ~7% APY on diversified SOL exposure.',
+        images: ['https://mint.jsoli.xyz/og-image.png'],
     },
 };
 

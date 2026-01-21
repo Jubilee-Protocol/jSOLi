@@ -1,0 +1,2348 @@
+{
+  "address": "DSBLsQNcR9UVnoqbBw2cVvQUXj9PkHzp22xBq9ow8NdV",
+  "metadata": {
+    "name": "jsol_vault",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Production-grade Solana LST aggregator vault"
+  },
+  "instructions": [
+    {
+      "name": "collect_fees",
+      "docs": [
+        "Collect accumulated fees",
+        "",
+        "Admin-only function to collect management and performance fees."
+      ],
+      "discriminator": [
+        164,
+        152,
+        207,
+        99,
+        30,
+        186,
+        19,
+        182
+      ],
+      "accounts": [
+        {
+          "name": "vault",
+          "docs": [
+            "The vault state account"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "vault_sol_account",
+          "docs": [
+            "Vault's SOL holding account"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116,
+                  95,
+                  115,
+                  111,
+                  108
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "fee_collector",
+          "docs": [
+            "Fee collector account (must be PDA for security)",
+            "HIGH-03 FIX: Use PDA to ensure fees go to correct address"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  101,
+                  101,
+                  115
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "docs": [
+            "The vault authority"
+          ],
+          "signer": true,
+          "relations": [
+            "vault"
+          ]
+        },
+        {
+          "name": "system_program",
+          "docs": [
+            "System program"
+          ],
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "complete_withdraw",
+      "docs": [
+        "Complete a pending withdrawal",
+        "",
+        "Burns jSOLi shares and transfers SOL to the user.",
+        "Can only be called after the unbonding period."
+      ],
+      "discriminator": [
+        172,
+        129,
+        141,
+        17,
+        95,
+        253,
+        251,
+        98
+      ],
+      "accounts": [
+        {
+          "name": "vault",
+          "docs": [
+            "The vault state account"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "jsoli_mint",
+          "docs": [
+            "The jSOLi token mint"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  106,
+                  115,
+                  111,
+                  108,
+                  105,
+                  95,
+                  109,
+                  105,
+                  110,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "user_jsol_account",
+          "docs": [
+            "User's jSOLi token account"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "user"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "jsoli_mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "user_account",
+          "docs": [
+            "User account tracking position"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  117,
+                  115,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "user"
+              }
+            ]
+          }
+        },
+        {
+          "name": "withdraw_request",
+          "docs": [
+            "Withdraw request account"
+          ],
+          "writable": true
+        },
+        {
+          "name": "vault_sol_account",
+          "docs": [
+            "Vault's SOL holding account"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116,
+                  95,
+                  115,
+                  111,
+                  108
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "user",
+          "docs": [
+            "The user completing withdrawal"
+          ],
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "token_program",
+          "docs": [
+            "Token program"
+          ],
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "system_program",
+          "docs": [
+            "System program"
+          ],
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "deposit",
+      "docs": [
+        "Deposit SOL into the vault",
+        "",
+        "Mints jSOLi shares to the depositor based on current share price.",
+        "",
+        "# Arguments",
+        "* `amount` - Amount of lamports to deposit"
+      ],
+      "discriminator": [
+        242,
+        35,
+        198,
+        137,
+        82,
+        225,
+        242,
+        182
+      ],
+      "accounts": [
+        {
+          "name": "vault",
+          "docs": [
+            "The vault state account"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "jsoli_mint",
+          "docs": [
+            "The jSOLi token mint"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  106,
+                  115,
+                  111,
+                  108,
+                  105,
+                  95,
+                  109,
+                  105,
+                  110,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "user_jsol_account",
+          "docs": [
+            "User's jSOLi token account"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "user"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "jsoli_mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "user_account",
+          "docs": [
+            "User account for tracking position"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  117,
+                  115,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "user"
+              }
+            ]
+          }
+        },
+        {
+          "name": "vault_sol_account",
+          "docs": [
+            "Vault's SOL holding account"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116,
+                  95,
+                  115,
+                  111,
+                  108
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "user",
+          "docs": [
+            "The user depositing SOL"
+          ],
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "docs": [
+            "System program"
+          ],
+          "address": "11111111111111111111111111111111"
+        },
+        {
+          "name": "token_program",
+          "docs": [
+            "Token program"
+          ],
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "associated_token_program",
+          "docs": [
+            "Associated token program"
+          ],
+          "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
+        },
+        {
+          "name": "rent",
+          "docs": [
+            "Rent sysvar"
+          ],
+          "address": "SysvarRent111111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "initialize",
+      "docs": [
+        "Initialize the jSOL vault with configuration",
+        "",
+        "Creates the vault state PDA and jSOL mint.",
+        "Can only be called once by the initial authority.",
+        "",
+        "# Arguments",
+        "* `allocations` - Initial protocol allocation targets",
+        "* `management_fee_bps` - Management fee in basis points (max 100)",
+        "* `performance_fee_bps` - Performance fee in basis points (max 2000)",
+        "* `deposit_cap` - Maximum total deposits (0 = no cap)"
+      ],
+      "discriminator": [
+        175,
+        175,
+        109,
+        31,
+        13,
+        152,
+        155,
+        237
+      ],
+      "accounts": [
+        {
+          "name": "vault",
+          "docs": [
+            "The vault state account to initialize"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "jsoli_mint",
+          "docs": [
+            "The jSOLi token mint"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  106,
+                  115,
+                  111,
+                  108,
+                  105,
+                  95,
+                  109,
+                  105,
+                  110,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "docs": [
+            "Authority who initializes and controls the vault"
+          ],
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "docs": [
+            "System program for account creation"
+          ],
+          "address": "11111111111111111111111111111111"
+        },
+        {
+          "name": "token_program",
+          "docs": [
+            "Token program for mint creation"
+          ],
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "rent",
+          "docs": [
+            "Rent sysvar"
+          ],
+          "address": "SysvarRent111111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "allocations",
+          "type": {
+            "vec": {
+              "defined": {
+                "name": "InitAllocation"
+              }
+            }
+          }
+        },
+        {
+          "name": "management_fee_bps",
+          "type": "u16"
+        },
+        {
+          "name": "performance_fee_bps",
+          "type": "u16"
+        },
+        {
+          "name": "deposit_cap",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "pause",
+      "docs": [
+        "Pause the vault",
+        "",
+        "Admin-only emergency function to halt deposits/withdrawals."
+      ],
+      "discriminator": [
+        211,
+        22,
+        221,
+        251,
+        74,
+        121,
+        193,
+        47
+      ],
+      "accounts": [
+        {
+          "name": "vault",
+          "docs": [
+            "The vault state account"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "docs": [
+            "The vault authority"
+          ],
+          "signer": true,
+          "relations": [
+            "vault"
+          ]
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "rebalance",
+      "docs": [
+        "Rebalance vault allocations",
+        "",
+        "Adjusts actual allocations to match targets.",
+        "Can be called by anyone if deviation exceeds threshold."
+      ],
+      "discriminator": [
+        108,
+        158,
+        77,
+        9,
+        210,
+        52,
+        88,
+        62
+      ],
+      "accounts": [
+        {
+          "name": "vault",
+          "docs": [
+            "The vault state account"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "rebalancer",
+          "docs": [
+            "Anyone can trigger rebalance if threshold is met"
+          ],
+          "signer": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "request_withdraw",
+      "docs": [
+        "Request a withdrawal from the vault",
+        "",
+        "Creates a pending withdrawal that can be completed after",
+        "the unstaking period has elapsed.",
+        "",
+        "# Arguments",
+        "* `shares` - Number of jSOLi shares to withdraw"
+      ],
+      "discriminator": [
+        137,
+        95,
+        187,
+        96,
+        250,
+        138,
+        31,
+        182
+      ],
+      "accounts": [
+        {
+          "name": "vault",
+          "docs": [
+            "The vault state account"
+          ],
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "user_account",
+          "docs": [
+            "User account tracking position"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  117,
+                  115,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "user"
+              }
+            ]
+          }
+        },
+        {
+          "name": "withdraw_request",
+          "docs": [
+            "Withdraw request account to create"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  119,
+                  105,
+                  116,
+                  104,
+                  100,
+                  114,
+                  97,
+                  119
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "user"
+              },
+              {
+                "kind": "account",
+                "path": "user_account.pending_withdrawals",
+                "account": "UserAccount"
+              }
+            ]
+          }
+        },
+        {
+          "name": "user",
+          "docs": [
+            "The user requesting withdrawal"
+          ],
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "docs": [
+            "System program"
+          ],
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "shares",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "stake_to_protocol",
+      "docs": [
+        "Stake SOL to a specific protocol",
+        "",
+        "Admin-only function to stake vault SOL to an LST protocol."
+      ],
+      "discriminator": [
+        77,
+        248,
+        58,
+        73,
+        98,
+        103,
+        37,
+        52
+      ],
+      "accounts": [
+        {
+          "name": "vault",
+          "docs": [
+            "The vault state account"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "vault_sol_account",
+          "docs": [
+            "Vault's SOL holding account"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116,
+                  95,
+                  115,
+                  111,
+                  108
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "docs": [
+            "The vault authority"
+          ],
+          "signer": true,
+          "relations": [
+            "vault"
+          ]
+        },
+        {
+          "name": "system_program",
+          "docs": [
+            "System program"
+          ],
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "protocol",
+          "type": "u8"
+        },
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "unpause",
+      "docs": [
+        "Unpause the vault",
+        "",
+        "Admin-only function to resume normal operations."
+      ],
+      "discriminator": [
+        169,
+        144,
+        4,
+        38,
+        10,
+        141,
+        188,
+        255
+      ],
+      "accounts": [
+        {
+          "name": "vault",
+          "docs": [
+            "The vault state account"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "docs": [
+            "The vault authority"
+          ],
+          "signer": true,
+          "relations": [
+            "vault"
+          ]
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "unstake_from_protocol",
+      "docs": [
+        "Unstake from a specific protocol",
+        "",
+        "Admin-only function to initiate unstaking from an LST protocol."
+      ],
+      "discriminator": [
+        220,
+        217,
+        92,
+        218,
+        47,
+        252,
+        44,
+        2
+      ],
+      "accounts": [
+        {
+          "name": "vault",
+          "docs": [
+            "The vault state account"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "docs": [
+            "The vault authority"
+          ],
+          "signer": true,
+          "relations": [
+            "vault"
+          ]
+        },
+        {
+          "name": "system_program",
+          "docs": [
+            "System program"
+          ],
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "protocol",
+          "type": "u8"
+        },
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "update_allocations",
+      "docs": [
+        "Update target allocations",
+        "",
+        "Admin-only function to change protocol allocation targets."
+      ],
+      "discriminator": [
+        229,
+        242,
+        146,
+        124,
+        44,
+        15,
+        130,
+        95
+      ],
+      "accounts": [
+        {
+          "name": "vault",
+          "docs": [
+            "The vault state account"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "docs": [
+            "The vault authority"
+          ],
+          "signer": true,
+          "relations": [
+            "vault"
+          ]
+        }
+      ],
+      "args": [
+        {
+          "name": "new_allocations",
+          "type": {
+            "vec": {
+              "defined": {
+                "name": "UpdateAllocation"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "update_config",
+      "docs": [
+        "Update vault configuration",
+        "",
+        "Admin-only function to update fees and other config."
+      ],
+      "discriminator": [
+        29,
+        158,
+        252,
+        191,
+        10,
+        83,
+        219,
+        99
+      ],
+      "accounts": [
+        {
+          "name": "vault",
+          "docs": [
+            "The vault state account"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "docs": [
+            "The vault authority"
+          ],
+          "signer": true,
+          "relations": [
+            "vault"
+          ]
+        }
+      ],
+      "args": [
+        {
+          "name": "new_config",
+          "type": {
+            "defined": {
+              "name": "UpdateConfigParams"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "UserAccount",
+      "discriminator": [
+        211,
+        33,
+        136,
+        16,
+        186,
+        110,
+        242,
+        127
+      ]
+    },
+    {
+      "name": "VaultState",
+      "discriminator": [
+        228,
+        196,
+        82,
+        165,
+        98,
+        210,
+        235,
+        152
+      ]
+    },
+    {
+      "name": "WithdrawRequest",
+      "discriminator": [
+        186,
+        239,
+        174,
+        191,
+        189,
+        13,
+        47,
+        196
+      ]
+    }
+  ],
+  "events": [
+    {
+      "name": "ConfigUpdatedEvent",
+      "discriminator": [
+        245,
+        158,
+        129,
+        99,
+        60,
+        100,
+        214,
+        220
+      ]
+    },
+    {
+      "name": "DepositEvent",
+      "discriminator": [
+        120,
+        248,
+        61,
+        83,
+        31,
+        142,
+        107,
+        144
+      ]
+    },
+    {
+      "name": "FeeCollectionEvent",
+      "discriminator": [
+        211,
+        185,
+        159,
+        202,
+        174,
+        150,
+        99,
+        52
+      ]
+    },
+    {
+      "name": "RebalanceEvent",
+      "discriminator": [
+        120,
+        27,
+        117,
+        235,
+        104,
+        42,
+        132,
+        75
+      ]
+    },
+    {
+      "name": "VaultInitialized",
+      "discriminator": [
+        180,
+        43,
+        207,
+        2,
+        18,
+        71,
+        3,
+        75
+      ]
+    },
+    {
+      "name": "VaultPausedEvent",
+      "discriminator": [
+        75,
+        189,
+        120,
+        167,
+        117,
+        229,
+        155,
+        60
+      ]
+    },
+    {
+      "name": "WithdrawCompleteEvent",
+      "discriminator": [
+        38,
+        216,
+        195,
+        178,
+        8,
+        182,
+        245,
+        153
+      ]
+    },
+    {
+      "name": "WithdrawRequestEvent",
+      "discriminator": [
+        168,
+        188,
+        89,
+        133,
+        10,
+        183,
+        190,
+        122
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "AlreadyInitialized",
+      "msg": "Vault has already been initialized"
+    },
+    {
+      "code": 6001,
+      "name": "InvalidAuthority",
+      "msg": "Invalid authority provided"
+    },
+    {
+      "code": 6002,
+      "name": "InvalidAllocationSum",
+      "msg": "Allocations must sum to exactly 10000 basis points (100%)"
+    },
+    {
+      "code": 6003,
+      "name": "AllocationExceedsMax",
+      "msg": "Single protocol allocation cannot exceed 5000 basis points (50%)"
+    },
+    {
+      "code": 6004,
+      "name": "TooManyProtocols",
+      "msg": "Maximum number of protocols exceeded"
+    },
+    {
+      "code": 6005,
+      "name": "DuplicateProtocol",
+      "msg": "Duplicate protocol in allocation list"
+    },
+    {
+      "code": 6006,
+      "name": "ManagementFeeExceedsMax",
+      "msg": "Management fee cannot exceed 100 basis points (1%)"
+    },
+    {
+      "code": 6007,
+      "name": "PerformanceFeeExceedsMax",
+      "msg": "Performance fee cannot exceed 2000 basis points (20%)"
+    },
+    {
+      "code": 6008,
+      "name": "DepositBelowMinimum",
+      "msg": "Deposit amount is below the minimum required"
+    },
+    {
+      "code": 6009,
+      "name": "DepositCapExceeded",
+      "msg": "Deposit would exceed vault's deposit cap"
+    },
+    {
+      "code": 6010,
+      "name": "VaultPaused",
+      "msg": "Vault is currently paused"
+    },
+    {
+      "code": 6011,
+      "name": "ZeroAmount",
+      "msg": "Amount must be greater than zero"
+    },
+    {
+      "code": 6012,
+      "name": "InsufficientShares",
+      "msg": "Insufficient shares for withdrawal"
+    },
+    {
+      "code": 6013,
+      "name": "WithdrawRequestNotFound",
+      "msg": "Withdrawal request not found"
+    },
+    {
+      "code": 6014,
+      "name": "WithdrawNotReady",
+      "msg": "Withdrawal request is not yet ready to be completed"
+    },
+    {
+      "code": 6015,
+      "name": "WithdrawAlreadyProcessed",
+      "msg": "Withdrawal request has already been processed"
+    },
+    {
+      "code": 6016,
+      "name": "InsufficientLiquidity",
+      "msg": "Insufficient vault liquidity for withdrawal"
+    },
+    {
+      "code": 6017,
+      "name": "RebalanceThresholdNotMet",
+      "msg": "Current allocation deviation is below rebalance threshold"
+    },
+    {
+      "code": 6018,
+      "name": "RebalanceTooSoon",
+      "msg": "Minimum time between rebalances has not elapsed"
+    },
+    {
+      "code": 6019,
+      "name": "SlippageExceeded",
+      "msg": "Slippage exceeded maximum allowed"
+    },
+    {
+      "code": 6020,
+      "name": "StaleOraclePrice",
+      "msg": "Oracle price data is stale"
+    },
+    {
+      "code": 6021,
+      "name": "OraclePriceDeviation",
+      "msg": "Oracle price deviation exceeds maximum allowed"
+    },
+    {
+      "code": 6022,
+      "name": "InvalidOracleAccount",
+      "msg": "Invalid oracle account provided"
+    },
+    {
+      "code": 6023,
+      "name": "OracleUnavailable",
+      "msg": "Oracle is not available"
+    },
+    {
+      "code": 6024,
+      "name": "Unauthorized",
+      "msg": "Unauthorized: signer is not the vault authority"
+    },
+    {
+      "code": 6025,
+      "name": "InvalidVaultState",
+      "msg": "Operation not allowed in current vault state"
+    },
+    {
+      "code": 6026,
+      "name": "MathOverflow",
+      "msg": "Arithmetic operation resulted in overflow"
+    },
+    {
+      "code": 6027,
+      "name": "MathUnderflow",
+      "msg": "Arithmetic operation resulted in underflow"
+    },
+    {
+      "code": 6028,
+      "name": "DivisionByZero",
+      "msg": "Division by zero"
+    },
+    {
+      "code": 6029,
+      "name": "ProtocolIntegrationFailed",
+      "msg": "LST protocol integration failed"
+    },
+    {
+      "code": 6030,
+      "name": "UnsupportedProtocol",
+      "msg": "Protocol is not supported"
+    },
+    {
+      "code": 6031,
+      "name": "ProtocolUnavailable",
+      "msg": "Protocol is temporarily unavailable"
+    },
+    {
+      "code": 6032,
+      "name": "InvalidAccountOwner",
+      "msg": "Account has invalid owner"
+    },
+    {
+      "code": 6033,
+      "name": "AccountNotInitialized",
+      "msg": "Account is not initialized"
+    },
+    {
+      "code": 6034,
+      "name": "InvalidMint",
+      "msg": "Invalid token mint"
+    }
+  ],
+  "types": [
+    {
+      "name": "Allocation",
+      "docs": [
+        "Protocol allocation configuration"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "protocol",
+            "docs": [
+              "The LST protocol"
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "target_bps",
+            "docs": [
+              "Target allocation in basis points (0-10000)"
+            ],
+            "type": "u16"
+          },
+          {
+            "name": "current_bps",
+            "docs": [
+              "Current actual allocation in basis points"
+            ],
+            "type": "u16"
+          },
+          {
+            "name": "amount",
+            "docs": [
+              "Amount of SOL value in this protocol"
+            ],
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ConfigUpdatedEvent",
+      "docs": [
+        "Event emitted when vault config is updated"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "field",
+            "type": "string"
+          },
+          {
+            "name": "old_value",
+            "type": "u64"
+          },
+          {
+            "name": "new_value",
+            "type": "u64"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "DepositEvent",
+      "docs": [
+        "Event emitted when a deposit is made"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "user",
+            "type": "pubkey"
+          },
+          {
+            "name": "lamports",
+            "type": "u64"
+          },
+          {
+            "name": "shares_minted",
+            "type": "u64"
+          },
+          {
+            "name": "share_price",
+            "type": "u64"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "FeeCollectionEvent",
+      "docs": [
+        "Event emitted when fees are collected"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "management_fees",
+            "type": "u64"
+          },
+          {
+            "name": "performance_fees",
+            "type": "u64"
+          },
+          {
+            "name": "total_collected",
+            "type": "u64"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "InitAllocation",
+      "docs": [
+        "Input allocation for initialization"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "protocol",
+            "docs": [
+              "Protocol ID (maps to LstProtocol enum)"
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "target_bps",
+            "docs": [
+              "Target allocation in basis points"
+            ],
+            "type": "u16"
+          }
+        ]
+      }
+    },
+    {
+      "name": "RebalanceEvent",
+      "docs": [
+        "Event emitted when the vault is rebalanced"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "old_allocations",
+            "type": {
+              "array": [
+                "u16",
+                10
+              ]
+            }
+          },
+          {
+            "name": "new_allocations",
+            "type": {
+              "array": [
+                "u16",
+                10
+              ]
+            }
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "UpdateAllocation",
+      "docs": [
+        "Parameters for updating an allocation"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "protocol",
+            "type": "u8"
+          },
+          {
+            "name": "target_bps",
+            "type": "u16"
+          }
+        ]
+      }
+    },
+    {
+      "name": "UpdateConfigParams",
+      "docs": [
+        "Parameters for updating configuration"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "management_fee_bps",
+            "type": {
+              "option": "u16"
+            }
+          },
+          {
+            "name": "performance_fee_bps",
+            "type": {
+              "option": "u16"
+            }
+          },
+          {
+            "name": "rebalance_threshold_bps",
+            "type": {
+              "option": "u16"
+            }
+          },
+          {
+            "name": "max_slippage_bps",
+            "type": {
+              "option": "u16"
+            }
+          },
+          {
+            "name": "deposit_cap",
+            "type": {
+              "option": "u64"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "UserAccount",
+      "docs": [
+        "User account tracking individual positions"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "bump",
+            "docs": [
+              "Bump seed for PDA derivation"
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "owner",
+            "docs": [
+              "Owner of this account"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "shares",
+            "docs": [
+              "Number of jSOL shares held"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "total_deposited",
+            "docs": [
+              "Total amount deposited (for analytics)"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "total_withdrawn",
+            "docs": [
+              "Total amount withdrawn (for analytics)"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "first_deposit",
+            "docs": [
+              "First deposit timestamp"
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "last_activity",
+            "docs": [
+              "Last activity timestamp"
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "pending_withdrawals",
+            "docs": [
+              "Number of pending withdrawal requests"
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "reserved",
+            "docs": [
+              "Reserved space for future upgrades"
+            ],
+            "type": {
+              "array": [
+                "u8",
+                64
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "VaultConfig",
+      "docs": [
+        "Vault configuration parameters"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "management_fee_bps",
+            "docs": [
+              "Management fee in basis points"
+            ],
+            "type": "u16"
+          },
+          {
+            "name": "performance_fee_bps",
+            "docs": [
+              "Performance fee in basis points"
+            ],
+            "type": "u16"
+          },
+          {
+            "name": "rebalance_threshold_bps",
+            "docs": [
+              "Rebalance threshold in basis points"
+            ],
+            "type": "u16"
+          },
+          {
+            "name": "max_slippage_bps",
+            "docs": [
+              "Maximum slippage allowed in basis points"
+            ],
+            "type": "u16"
+          },
+          {
+            "name": "deposit_cap",
+            "docs": [
+              "Deposit cap in lamports (0 = no cap)"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "is_paused",
+            "docs": [
+              "Whether the vault is paused"
+            ],
+            "type": "bool"
+          }
+        ]
+      }
+    },
+    {
+      "name": "VaultInitialized",
+      "docs": [
+        "Event emitted when the vault is initialized"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "jsoli_mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "VaultPausedEvent",
+      "docs": [
+        "Event emitted when vault is paused/unpaused"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "is_paused",
+            "type": "bool"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "VaultState",
+      "docs": [
+        "Main vault state account",
+        "",
+        "Stores the global state of the jSOL vault including TVL, share info,",
+        "and protocol allocations."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "bump",
+            "docs": [
+              "Bump seed for PDA derivation"
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "authority",
+            "docs": [
+              "Authority that can perform admin operations"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "jsoli_mint",
+            "docs": [
+              "jSOLi token mint address"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "total_tvl",
+            "docs": [
+              "Total value locked in the vault (in lamports)"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "total_shares",
+            "docs": [
+              "Total jSOL shares outstanding"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "high_water_mark",
+            "docs": [
+              "High water mark for performance fee calculation (in lamports per share)"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "accrued_management_fees",
+            "docs": [
+              "Accumulated management fees (in lamports)"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "accrued_performance_fees",
+            "docs": [
+              "Accumulated performance fees (in lamports)"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "last_fee_collection",
+            "docs": [
+              "Last fee collection timestamp"
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "last_rebalance",
+            "docs": [
+              "Last rebalance timestamp"
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "rebalance_count",
+            "docs": [
+              "Number of rebalances performed"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "depositor_count",
+            "docs": [
+              "Number of unique depositors"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "config",
+            "docs": [
+              "Vault configuration"
+            ],
+            "type": {
+              "defined": {
+                "name": "VaultConfig"
+              }
+            }
+          },
+          {
+            "name": "num_allocations",
+            "docs": [
+              "Number of active allocations"
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "allocations",
+            "docs": [
+              "Protocol allocations (fixed size array)"
+            ],
+            "type": {
+              "array": [
+                {
+                  "defined": {
+                    "name": "Allocation"
+                  }
+                },
+                10
+              ]
+            }
+          },
+          {
+            "name": "reserved",
+            "docs": [
+              "Reserved space for future upgrades"
+            ],
+            "type": {
+              "array": [
+                "u8",
+                128
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "WithdrawCompleteEvent",
+      "docs": [
+        "Event emitted when a withdrawal is completed"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "user",
+            "type": "pubkey"
+          },
+          {
+            "name": "shares",
+            "type": "u64"
+          },
+          {
+            "name": "lamports_received",
+            "type": "u64"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "WithdrawRequest",
+      "docs": [
+        "Withdrawal request account"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "bump",
+            "docs": [
+              "Bump seed for PDA derivation"
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "owner",
+            "docs": [
+              "Owner of this withdrawal request"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "shares",
+            "docs": [
+              "Number of shares being withdrawn"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "estimated_lamports",
+            "docs": [
+              "Estimated lamports value at time of request"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "created_at",
+            "docs": [
+              "Timestamp when the request was created"
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "ready_at",
+            "docs": [
+              "Timestamp when the request becomes ready"
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "status",
+            "docs": [
+              "Current status of the request"
+            ],
+            "type": {
+              "defined": {
+                "name": "WithdrawStatus"
+              }
+            }
+          },
+          {
+            "name": "request_index",
+            "docs": [
+              "Request index for this user (for PDA derivation)"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "reserved",
+            "docs": [
+              "Reserved space for future upgrades"
+            ],
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "WithdrawRequestEvent",
+      "docs": [
+        "Event emitted when a withdrawal is requested"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "user",
+            "type": "pubkey"
+          },
+          {
+            "name": "shares",
+            "type": "u64"
+          },
+          {
+            "name": "estimated_lamports",
+            "type": "u64"
+          },
+          {
+            "name": "ready_at",
+            "type": "i64"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "WithdrawStatus",
+      "docs": [
+        "Status of a withdrawal request"
+      ],
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Pending"
+          },
+          {
+            "name": "Ready"
+          },
+          {
+            "name": "Completed"
+          },
+          {
+            "name": "Cancelled"
+          }
+        ]
+      }
+    }
+  ]
+}
