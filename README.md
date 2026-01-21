@@ -1,13 +1,13 @@
-# jSOLi - The Solana Index Fund
+# jSOLi - The Solana LST Index 
 
 [![Built on Solana](https://img.shields.io/badge/Built%20on-Solana-9945FF)](https://solana.com)
 [![Powered by Anchor](https://img.shields.io/badge/Powered%20by-Anchor%200.29-blue)](https://anchor-lang.com)
-[![Status](https://img.shields.io/badge/Status-In%20Development-yellow)](https://github.com/Jubilee-Protocol/jSOL-index)
+[![Status](https://img.shields.io/badge/Status-In%20Development-yellow)](https://github.com/Jubilee-Protocol/jSOLi)
 
 > A passive, diversified liquid staking strategy that automatically rebalances across Solana's top LST protocols while optimizing for APY.
 
-**Website**: Coming Soon  
-**App**: Coming Soon  
+**Website**: https://mint.jsoli.xyz  
+**App**: https://jsoli.xyz 
 **Program**: `TBD`  
 **Status**: 🔨 **In Development** — Jan 2026
 
@@ -15,7 +15,7 @@
 
 ## Overview
 
-jSOL aggregates user deposits across multiple Liquid Staking Token (LST) protocols on Solana, automatically rebalancing to optimize yield. Users deposit SOL and receive jSOL shares representing their proportional ownership.
+jSOLi aggregates user deposits across multiple Liquid Staking Token (LST) protocols on Solana, automatically rebalancing to optimize yield. Users deposit SOL and receive jSOLi shares representing their proportional ownership.
 
 ### Key Features
 
@@ -67,27 +67,27 @@ jSOL aggregates user deposits across multiple Liquid Staking Token (LST) protoco
 | Account | Address |
 |---------|---------|
 | jSOLi Vault | `TBD` |
-| jSOL Mint | `TBD` |
+| jSOLi Mint | `TBD` |
 
 ### Devnet
 | Account | Address |
 |---------|---------|
 | jSOLi Vault | `TBD` |
-| jSOL Mint | `TBD` |
+| jSOLi Mint | `TBD` |
 
 ---
 
 ## Repository Structure
 ```
-jsol-vault/
-├── programs/jsol-vault/src/
+jSOLi-vault/
+├── programs/jSOLi-vault/src/
 │   ├── lib.rs              # Program entry point
 │   ├── constants.rs        # Configuration values
 │   ├── errors.rs           # 30+ custom error types
 │   ├── state.rs            # VaultState, UserAccount, WithdrawRequest
 │   ├── instructions/
 │   │   ├── initialize.rs   # Vault setup
-│   │   ├── deposit.rs      # SOL deposits → jSOL shares
+│   │   ├── deposit.rs      # SOL deposits → jSOLi shares
 │   │   ├── withdraw.rs     # Two-step withdrawal
 │   │   ├── rebalance.rs    # Allocation adjustment
 │   │   ├── admin.rs        # Config, fees, pause
@@ -127,14 +127,14 @@ anchor deploy --provider.cluster devnet
 ### Deposit Flow
 1. User deposits SOL into the vault
 2. Vault calculates shares based on current TVL
-3. jSOL tokens are minted to user
+3. jSOLi tokens are minted to user
 4. SOL is allocated across LST protocols
 
 ### Withdrawal Flow (Two-Step)
-1. User requests withdrawal with jSOL amount
+1. User requests withdrawal with jSOLi amount
 2. Vault creates `WithdrawRequest` with ~3 day unlock
 3. User completes withdrawal after unlock period
-4. jSOL is burned, SOL returned to user
+4. jSOLi is burned, SOL returned to user
 
 ### Rebalancing
 - Triggered when any protocol deviates >5% from target
