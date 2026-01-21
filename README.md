@@ -70,11 +70,12 @@ jSOLi aggregates user deposits across multiple Liquid Staking Token (LST) protoc
 | jSOLi Vault | `TBD` |
 | jSOLi Mint | `TBD` |
 
-### Devnet
+### Devnet (Live ✅)
 | Account | Address |
 |---------|---------|
-| jSOLi Vault | `TBD` |
-| jSOLi Mint | `TBD` |
+| jSOLi Program | [`DSBLsQNcR9UVnoqbBw2cVvQUXj9PkHzp22xBq9ow8NdV`](https://explorer.solana.com/address/DSBLsQNcR9UVnoqbBw2cVvQUXj9PkHzp22xBq9ow8NdV?cluster=devnet) |
+| Vault PDA | [`5AvSxZhE4gxFVyoL3PpVRtrUa2hmYf9WUdsSbWxLiB7D`](https://explorer.solana.com/address/5AvSxZhE4gxFVyoL3PpVRtrUa2hmYf9WUdsSbWxLiB7D?cluster=devnet) |
+| jSOLi Mint | [`AUThYzVoRi6WEcgjAHyRCjjG3ZPpyi4xNn626z6rLWRf`](https://explorer.solana.com/address/AUThYzVoRi6WEcgjAHyRCjjG3ZPpyi4xNn626z6rLWRf?cluster=devnet) |
 
 ---
 
