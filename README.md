@@ -162,11 +162,11 @@ anchor deploy --provider.cluster devnet
 - [x] State accounts and error handling
 - [x] Deposit/withdraw instructions
 - [x] Rebalancing logic
-- [ ] Pyth oracle integration (in progress)
+- [x] Security audit
+- [x] Devnet deployment
+- [ ] Pyth oracle integration
 - [ ] Complete LST CPI integrations
 - [ ] Comprehensive test suite
-- [ ] Security audit
-- [ ] Devnet deployment
 - [ ] Mainnet launch
 
 ---
