@@ -238,6 +238,46 @@ export default function Home() {
                 </div>
             </header>
 
+            {/* Devnet Warning Banner */}
+            <div style={{
+                background: 'linear-gradient(90deg, #FF6B35, #F7931A)',
+                padding: '12px 24px',
+                textAlign: 'center',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '16px',
+                flexWrap: 'wrap',
+            }}>
+                <span style={{
+                    color: 'white',
+                    fontWeight: '600',
+                    fontSize: '14px',
+                }}>
+                    ⚠️ DEVNET — This is a test environment. Tokens have no real value.
+                </span>
+                <a
+                    href="https://faucet.solana.com/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                        background: 'rgba(255,255,255,0.2)',
+                        color: 'white',
+                        padding: '6px 16px',
+                        borderRadius: '20px',
+                        fontSize: '13px',
+                        fontWeight: '600',
+                        textDecoration: 'none',
+                        border: '1px solid rgba(255,255,255,0.3)',
+                        transition: 'all 0.2s ease',
+                    }}
+                    onMouseOver={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.3)'}
+                    onMouseOut={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.2)'}
+                >
+                    💧 Get Devnet SOL
+                </a>
+            </div>
+
             {/* Stats Bar */}
             <div style={{
                 display: 'flex',
