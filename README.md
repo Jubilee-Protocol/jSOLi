@@ -8,7 +8,6 @@
 
 **Website**: https://mint.jsoli.xyz  
 **App**: https://jsoli.xyz 
-
 **Program**: `TBD`  
 **Status**: 🔨 **In Development** — Jan 2026
 
