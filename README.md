@@ -51,7 +51,6 @@ jSOL aggregates user deposits across multiple Liquid Staking Token (LST) protoco
 
 ## Security
 
-- **Audit Status**: Pending (Budget: $30K via Sherlock)
 - **Features**:
   - ✅ Checked arithmetic (no overflow/underflow)
   - ✅ Role-based access control
