@@ -2,15 +2,15 @@
 
 [![Built on Solana](https://img.shields.io/badge/Built%20on-Solana-9945FF)](https://solana.com)
 [![Powered by Anchor](https://img.shields.io/badge/Powered%20by-Anchor%200.29-blue)](https://anchor-lang.com)
-[![Status](https://img.shields.io/badge/Status-In%20Development-yellow)](https://github.com/Jubilee-Protocol/jSOLi)
+[![Status](https://img.shields.io/badge/Status-Live%20on%20Devnet-green)](https://github.com/Jubilee-Protocol/jSOLi)
 
 > A passive, diversified liquid staking strategy that automatically rebalances across Solana's top LST protocols while optimizing for APY.
 
 **Website**: https://mint.jsoli.xyz  
 **App**: https://jsoli.xyz 
 
-**Program**: `TBD`  
-**Status**: 🔨 **In Development** — Jan 2026
+**Program**: `DSBLsQNcR9UVnoqbBw2cVvQUXj9PkHzp22xBq9ow8NdV`  
+**Status**: 🚀 **Live on Devnet** — Jan 2026
 
 ---
 
