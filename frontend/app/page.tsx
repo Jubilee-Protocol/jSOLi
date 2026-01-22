@@ -12,6 +12,8 @@ import { TermsModal, useTerms } from './components/TermsModal';
 import { TreasuryModal } from './components/TreasuryModal';
 import { AccessLinks } from './components/AccessLinks';
 import { TutorialModal, useTutorial } from './components/TutorialModal';
+import { useTransactionHistory } from './hooks/useTransactionHistory';
+import { FASBModal } from './components/FASBModal';
 
 // Theme types
 type Theme = 'light' | 'dark';
@@ -82,6 +84,11 @@ export default function Home() {
     const { showTutorial, reopenTutorial, closeTutorial, completeTutorial } = useTutorial();
     const [showTreasury, setShowTreasury] = useState(false);
 
+    // FASB / History
+    const [showFASB, setShowFASB] = useState(false);
+    const { history, loading: historyLoading, refetch: refetchHistory } = useTransactionHistory();
+    const [totalShares, setTotalShares] = useState<number>(0);
+
     // SOL price hook
     const { price: solPrice } = useSolPrice();
     const minDepositSOL = 0.1;
@@ -114,6 +121,7 @@ export default function Home() {
             const vaultState = await getVaultState();
             if (vaultState) {
                 setTvl(Number(vaultState.totalTvl) / LAMPORTS_PER_SOL);
+                setTotalShares(Number(vaultState.totalShares) / LAMPORTS_PER_SOL);
             }
 
             const userAccount = await getUserAccount();
@@ -319,28 +327,55 @@ export default function Home() {
                         Diversified yield across top LST protocols
                     </p>
 
-                    {/* Tabs */}
-                    <div style={{ display: 'flex', background: c.inputBg, borderRadius: '12px', padding: '4px', marginBottom: '24px' }}>
-                        {['deposit', 'withdraw'].map((tab) => (
-                            <button
-                                key={tab}
-                                onClick={() => setActiveTab(tab as any)}
-                                style={{
-                                    flex: 1,
-                                    padding: '10px',
-                                    borderRadius: '10px',
-                                    border: 'none',
-                                    background: activeTab === tab ? c.card : 'transparent',
-                                    color: activeTab === tab ? c.accent : c.textMuted,
-                                    fontWeight: '600',
-                                    cursor: 'pointer',
-                                    boxShadow: activeTab === tab ? '0 4px 12px rgba(153, 69, 255, 0.1)' : 'none',
-                                    transition: 'all 0.2s ease'
-                                }}
-                            >
-                                {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                            </button>
-                        ))}
+                    {/* Tabs & History */}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+                        <div style={{ display: 'flex', background: c.inputBg, borderRadius: '12px', padding: '4px', gap: '4px' }}>
+                            {['deposit', 'withdraw'].map((tab) => (
+                                <button
+                                    key={tab}
+                                    onClick={() => setActiveTab(tab as any)}
+                                    style={{
+                                        padding: '10px 20px',
+                                        borderRadius: '10px',
+                                        border: 'none',
+                                        background: activeTab === tab ? c.card : 'transparent',
+                                        color: activeTab === tab ? c.accent : c.textMuted,
+                                        fontWeight: '600',
+                                        cursor: 'pointer',
+                                        boxShadow: activeTab === tab ? '0 4px 12px rgba(153, 69, 255, 0.1)' : 'none',
+                                        transition: 'all 0.2s ease',
+                                        fontSize: '16px'
+                                    }}
+                                >
+                                    {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                                </button>
+                            ))}
+                        </div>
+
+                        <button
+                            onClick={() => {
+                                refetchHistory();
+                                setShowFASB(true);
+                            }}
+                            style={{
+                                background: 'transparent',
+                                border: `1px solid ${c.accent}`,
+                                borderRadius: '10px',
+                                padding: '8px 16px',
+                                color: c.accent,
+                                fontWeight: '600',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '6px',
+                                fontSize: '14px',
+                                transition: 'all 0.2s ease'
+                            }}
+                            onMouseOver={(e) => e.currentTarget.style.background = 'rgba(153, 69, 255, 0.1)'}
+                            onMouseOut={(e) => e.currentTarget.style.background = 'transparent'}
+                        >
+                            History
+                        </button>
                     </div>
 
                     {/* Input */}
@@ -520,9 +555,31 @@ export default function Home() {
                     onTreasuryClick={() => setShowTreasury(true)}
                 />
 
-                <p style={{ color: c.textLight, fontSize: '12px' }}>
-                    © 2026 Jubilee Protocol. All rights reserved.
-                </p>
+                <div style={{
+                    marginTop: '24px',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    gap: '12px',
+                    color: c.textLight
+                }}>
+                    <div style={{
+                        background: c.accent,
+                        width: '32px',
+                        height: '32px',
+                        borderRadius: '50%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: 'white',
+                        fontSize: '14px'
+                    }}>
+                        ✉️
+                    </div>
+                    <p style={{ fontSize: '14px', fontWeight: '500' }}>
+                        2026 © Jubilee Protocol · Governed by Hundredfold Foundation
+                    </p>
+                </div>
             </footer>
 
             {/* Modals */}
@@ -543,6 +600,14 @@ export default function Home() {
                         isOpen={showTreasury}
                         onClose={() => setShowTreasury(false)}
                         theme={theme}
+                    />
+                    <FASBModal
+                        isOpen={showFASB}
+                        onClose={() => setShowFASB(false)}
+                        history={history}
+                        loading={historyLoading}
+                        theme={theme}
+                        currentValue={jsoliBalance * (totalShares > 0 ? tvl / totalShares : 1) * solPrice}
                     />
                 </>
             )}

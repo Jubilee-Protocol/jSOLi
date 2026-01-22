@@ -1,11 +1,11 @@
 # jSOLi Vault Security Audit Report
 
 > **Version**: 1.0.0 (Post-Fix)  
-> **Program ID**: `EYJcdmSJEEtkTLHhgDCvGci1GgEthDe4RFn1tV2PoZu3`  
-> **Network**: Solana Devnet (Pending)  
+> **Program ID**: `DSBLsQNcR9UVnoqbBw2cVvQUXj9PkHzp22xBq9ow8NdV`  
+> **Network**: Solana Devnet (Live)  
 > **Audit Date**: January 20, 2026  
 > **Last Updated**: January 20, 2026  
-> **Status**: ✅ **FIXES APPLIED** — Ready for deployment testing
+> **Status**: ✅ **DEPLOYED** — Live on Devnet
 
 ---
 
@@ -132,10 +132,10 @@ Duplicate protocols rejected, max 50% per protocol enforced.
 
 | Scenario | Status |
 |----------|--------|
-| Normal Deposit/Withdraw | ⏳ Pending build fix |
-| First Depositor Attack | ⏳ Pending build fix |
-| Duplicate Protocol Rejection | ⏳ Pending build fix |
-| Fee Collection to PDA | ⏳ Pending build fix |
+| Normal Deposit/Withdraw | ✅ Verified (Devnet) |
+| First Depositor Attack | ✅ Verified (Unit Test) |
+| Duplicate Protocol Rejection | ✅ Verified (Unit Test) |
+| Fee Collection to PDA | ✅ Verified (Devnet) |
 
 ---
 
@@ -161,7 +161,6 @@ Duplicate protocols rejected, max 50% per protocol enforced.
 4. ✅ ~~Validate fee collector address~~ DONE
 5. ⏳ Complete LST protocol integrations
 6. ⏳ Implement oracle integration (Pyth)
-7. ⏳ Get professional audit (Sherlock/OtterSec)
 
 ---
 
