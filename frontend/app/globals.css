@@ -1,11 +1,6 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-/* Import Work Sans from Google Fonts */
+/* jSOLi Design System - Solana Branding */
 @import url('https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap');
 
-/* jSOLi Design System - Solana Branding */
 :root {
   --solana-purple: #9945FF;
   --solana-green: #14F195;
@@ -59,16 +54,6 @@ body {
   background: #7C3AED;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(153, 69, 255, 0.3);
-}
-
-/* Solana Green accent text */
-.text-solana-green {
-  color: var(--solana-green);
-}
-
-/* Solana Purple accent text */
-.text-solana-purple {
-  color: var(--solana-purple);
 }
 
 /* Card styles for dApp interface */
@@ -128,158 +113,237 @@ input[type="number"]::-webkit-outer-spin-button {
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Mobile responsive utilities */
-@media (max-width: 640px) {
-  .mobile-stack {
-    flex-direction: column;
-  }
-
-  .mobile-full {
-    width: 100%;
+/* Animation keyframes */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
 }
 
-/* Mobile responsive - comprehensive styles */
-@media (max-width: 480px) {
-
-  /* Reduce card padding on mobile */
-  .card,
-  .bg-white {
-    padding: 16px !important;
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
   }
 
-  /* Smaller font sizes */
-  h1 {
-    font-size: 1.5rem !important;
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
   }
 
-  /* Stats grid - 2 columns on mobile */
-  .stats-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
+  to {
+    opacity: 1;
+  }
+}
+
+/* ============================================
+   SOLANA WALLET ADAPTER OVERRIDES
+   ============================================ */
+
+/* Make wallet button responsive */
+.wallet-adapter-button {
+  font-size: 14px !important;
+  padding: 8px 16px !important;
+  border-radius: 8px !important;
+  height: auto !important;
+  white-space: nowrap !important;
+}
+
+.wallet-adapter-button-trigger {
+  background: linear-gradient(135deg, var(--solana-purple), #7C3AED) !important;
+}
+
+/* ============================================
+   MOBILE RESPONSIVE STYLES - 768px and below
+   ============================================ */
+@media screen and (max-width: 768px) {
+  html {
+    font-size: 15px;
   }
 
-  /* Smaller buttons */
-  .btn-purple {
-    padding: 10px 24px;
-    font-size: 14px;
+  body {
+    padding-bottom: env(safe-area-inset-bottom);
   }
 
-  /* Adjust input sizes */
-  input[type="text"],
-  input[type="number"] {
-    font-size: 1.5rem !important;
-  }
-
-  /* Toast positioning for mobile */
-  .toast-mobile {
-    left: 16px !important;
-    right: 16px !important;
-    bottom: 16px !important;
-    max-width: none !important;
-  }
-
-  /* Header adjustments for mobile */
+  /* Header - prevent cutoff */
   header {
-    padding: 12px 16px !important;
-    flex-wrap: wrap;
-    gap: 12px;
+    padding: 12px 12px !important;
+    gap: 8px !important;
+    flex-wrap: wrap !important;
   }
 
-  /* Hide theme and treasury icons text, keep buttons small */
+  /* Logo section */
+  header>div:first-child {
+    gap: 8px !important;
+  }
+
+  header img {
+    width: 28px !important;
+    height: 28px !important;
+  }
+
+  header h1 {
+    font-size: 20px !important;
+  }
+
+  /* Header buttons row - theme, treasury, wallet */
+  header>div:last-child {
+    gap: 6px !important;
+    flex-wrap: nowrap !important;
+  }
+
+  /* Theme and treasury buttons */
   header button {
     width: 36px !important;
     height: 36px !important;
     font-size: 16px !important;
+    min-width: 36px !important;
   }
 
-  /* Stats bar responsive */
-  .stats-bar {
-    gap: 24px !important;
-    padding: 12px 16px !important;
-    flex-wrap: wrap;
+  /* Wallet button - critical fix */
+  .wallet-adapter-button {
+    font-size: 12px !important;
+    padding: 8px 12px !important;
+    max-width: 130px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
   }
 
-  /* Access links - stack on mobile */
-  .access-links {
-    flex-direction: column;
+  .wallet-adapter-button-start-icon {
+    width: 20px !important;
+    height: 20px !important;
+    margin-right: 6px !important;
+  }
+
+  /* Devnet banner - stack on mobile */
+  .devnet-banner,
+  div[style*="linear-gradient(90deg, #FF6B35"] {
+    flex-direction: column !important;
     gap: 8px !important;
+    padding: 10px 16px !important;
+  }
+
+  /* Stats bar */
+  div[style*="gap: 48px"] {
+    gap: 16px !important;
+    flex-wrap: wrap !important;
     padding: 12px 16px !important;
   }
 
-  .access-links a,
-  .access-links button {
-    font-size: 13px !important;
+  /* Main card */
+  main {
+    padding: 8px !important;
+  }
+
+  .card {
+    margin: 0 !important;
+    border-radius: 16px !important;
+    padding: 16px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* Form inputs */
+  input[type="text"],
+  input[type="number"] {
+    font-size: 18px !important;
+  }
+
+  /* Large touch targets */
+  button {
+    min-height: 44px;
+  }
+
+  /* Footer */
+  footer {
+    padding: 16px !important;
+  }
+}
+
+/* ============================================
+   MOBILE RESPONSIVE STYLES - 480px and below
+   ============================================ */
+@media screen and (max-width: 480px) {
+  html {
+    font-size: 16px !important;
+    /* Prevents iOS zoom on input focus */
+  }
+
+  body {
+    min-width: 100vw;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Header - two-row layout on very small screens */
+  header {
+    padding: 10px 8px !important;
+  }
+
+  header h1 {
+    font-size: 18px !important;
+  }
+
+  /* Wallet button - even more compact */
+  .wallet-adapter-button {
+    font-size: 11px !important;
     padding: 6px 10px !important;
-  }
-}
-
-/* Animation keyframes */
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes slideIn {
-  from {
-    transform: translateX(100%);
-    opacity: 0;
+    max-width: 110px !important;
+    height: 36px !important;
   }
 
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
+  /* Hide wallet icon on very small screens to save space */
+  .wallet-adapter-button-start-icon {
+    display: none !important;
   }
 
-  to {
-    opacity: 1;
-  }
-}
-
-/* Viewport meta for mobile */
-@media screen and (max-width: 768px) {
-  html {
-    font-size: 14px;
+  /* Devnet banner text */
+  .devnet-banner span,
+  div[style*="linear-gradient(90deg, #FF6B35"] span {
+    font-size: 12px !important;
   }
 
-  body {
-    padding-bottom: env(safe-area-inset-bottom);
-  }
-}
-
-/* Mobile wallet specific fixes */
-@media screen and (max-width: 480px) {
-  html {
-    font-size: 16px !important;
-    /* Prevent zoom on input focus in iOS */
+  /* Stats - single column on very small */
+  div[style*="gap: 48px"] {
+    gap: 12px !important;
   }
 
-  body {
-    min-width: 100vw;
-    padding: 0 !important;
-    margin: 0 !important;
+  div[style*="gap: 48px"]>div {
+    min-width: 80px !important;
   }
 
-  /* Ensure card fills mobile screen */
-  .card {
-    margin: 8px !important;
-    padding: 16px !important;
-    border-radius: 16px !important;
-    min-width: calc(100vw - 16px) !important;
+  /* Heading sizes */
+  h1 {
+    font-size: 22px !important;
   }
 
-  /* Larger touch targets for buttons */
-  .btn-purple {
-    width: 100% !important;
-    padding: 16px 24px !important;
+  h2 {
     font-size: 18px !important;
-    min-height: 56px;
+  }
+
+  h3 {
+    font-size: 16px !important;
+  }
+
+  /* Form sections */
+  .card {
+    padding: 12px !important;
+  }
+
+  /* Primary action buttons - full width */
+  .btn-purple,
+  button[style*="background: linear-gradient"],
+  button[style*="background: #9945FF"] {
+    width: 100% !important;
+    padding: 14px 20px !important;
+    font-size: 16px !important;
+    min-height: 52px !important;
   }
 
   /* Prevent iOS zoom on input focus */
@@ -293,330 +357,83 @@ input[type="number"]::-webkit-outer-spin-button {
   input[type="text"],
   input[type="number"] {
     width: 100% !important;
-    padding: 12px !important;
-    font-size: 18px !important;
-    min-height: 48px;
+    padding: 10px !important;
   }
 
-  /* Better spacing */
-  h1 {
-    font-size: 24px !important;
+  /* Tab buttons */
+  button[style*="cursor: pointer"][style*="font-weight"] {
+    font-size: 14px !important;
+    padding: 8px 16px !important;
   }
 
-  h2 {
-    font-size: 20px !important;
+  /* Access links - stack */
+  footer>div {
+    flex-direction: column !important;
+    gap: 8px !important;
+    align-items: center !important;
   }
 
-  h3 {
-    font-size: 18px !important;
-  }
-
-  /* Fix container width */
-  main,
-  [class*="container"] {
-    width: 100% !important;
-    max-width: 100vw !important;
-    padding: 8px !important;
-  }
-}
-
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
-}
-
-html {
-  scroll-behavior: smooth;
-  overflow-x: hidden;
-}
-
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
-  background: var(--white);
-  color: var(--text-dark);
-  font-family: 'Work Sans', system-ui, -apple-system, sans-serif;
-  -webkit-overflow-scrolling: touch;
-  /* Prevent RainbowKit modal from shifting page content */
-  overflow-y: scroll !important;
-}
-
-/* Fix RainbowKit modal positioning - prevent page shift */
-html {
-  overflow-y: scroll;
-}
-
-/* Prevent body padding when RainbowKit modal opens */
-body[data-rk-modal-open="true"],
-body[style*="padding-right"] {
-  padding-right: 0 !important;
-}
-
-/* Ensure RainbowKit modal is centered properly */
-[data-rk] [role="dialog"] {
-  position: fixed !important;
-  inset: 0 !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-}
-
-/* Gradient background with Base blue, white, and Jubilee pink */
-.bg-vignette {
-  background:
-    radial-gradient(ellipse at top left, rgba(243, 119, 187, 0.08) 0%, transparent 40%),
-    radial-gradient(ellipse at bottom right, rgba(243, 119, 187, 0.06) 0%, transparent 40%),
-    radial-gradient(ellipse at center, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0.95) 40%, rgba(0, 82, 255, 0.12) 100%);
-  min-height: 100vh;
-}
-
-/* Base Blue primary button - pill shaped */
-.btn-blue {
-  background: var(--blue-primary);
-  color: white;
-  border-radius: 50px;
-  padding: 12px 40px;
-  font-weight: 500;
-  transition: all 0.2s ease;
-  border: none;
-  cursor: pointer;
-}
-
-.btn-blue:hover {
-  background: #003DBF;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 82, 255, 0.3);
-}
-
-/* BTC Orange accent text */
-.text-btc-orange {
-  color: var(--btc-orange);
-}
-
-/* Base Blue accent text */
-.text-blue-primary {
-  color: var(--blue-primary);
-}
-
-/* Card styles for dApp interface */
-.card {
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 4px 24px rgba(0, 82, 255, 0.08);
-  border: 1px solid rgba(0, 82, 255, 0.1);
-}
-
-/* Input styles */
-input[type="number"],
-input[type="text"] {
-  background: transparent;
-  border: none;
-  font-size: 1.25rem;
-  color: var(--text-dark);
-  width: 100%;
-  font-family: 'Work Sans', sans-serif;
-}
-
-input:focus {
-  outline: none;
-}
-
-input::placeholder {
-  color: #A0A0A0;
-}
-
-/* Hide number spinners */
-input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-/* Social icon buttons */
-.social-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: white;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-}
-
-.social-icon:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 82, 255, 0.2);
-}
-
-/* Smooth transitions */
-.transition-smooth {
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* Mobile responsive utilities */
-@media (max-width: 640px) {
-  .mobile-stack {
-    flex-direction: column;
-  }
-
-  .mobile-full {
-    width: 100%;
-  }
-}
-
-/* Mobile responsive - comprehensive styles */
-@media (max-width: 480px) {
-
-  /* Reduce card padding on mobile */
-  .card,
-  .bg-white {
-    padding: 16px !important;
-  }
-
-  /* Smaller font sizes */
-  h1 {
-    font-size: 1.5rem !important;
-  }
-
-  /* Stats grid - 2 columns on mobile */
-  .stats-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-  }
-
-  /* Smaller buttons */
-  .btn-blue {
-    padding: 10px 24px;
-    font-size: 14px;
-  }
-
-  /* Adjust input sizes */
-  input[type="text"],
-  input[type="number"] {
-    font-size: 1.5rem !important;
-  }
-
-  /* Toast positioning for mobile */
-  .toast-mobile {
-    left: 16px !important;
-    right: 16px !important;
-    bottom: 16px !important;
+  /* Modal adjustments */
+  div[style*="position: fixed"][style*="inset: 0"]>div {
+    width: calc(100vw - 24px) !important;
     max-width: none !important;
-  }
-
-  /* RainbowKit modal containment on mobile */
-  [data-rk] div[role="dialog"],
-  [data-rk] [data-testid="rk-account-modal"] {
-    max-width: calc(100vw - 32px) !important;
-    max-height: 80vh !important;
-    overflow: auto !important;
-  }
-}
-
-/* Animation keyframes */
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes slideIn {
-  from {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
-}
-
-/* Viewport meta for mobile */
-@media screen and (max-width: 768px) {
-  html {
-    font-size: 14px;
-  }
-
-  body {
-    padding-bottom: env(safe-area-inset-bottom);
-  }
-}
-
-/* MetaMask browser / Mobile wallet specific fixes */
-@media screen and (max-width: 480px) {
-  html {
-    font-size: 16px !important;
-    /* Prevent zoom on input focus in iOS */
-  }
-
-  body {
-    min-width: 100vw;
-    padding: 0 !important;
-    margin: 0 !important;
-  }
-
-  /* Ensure card fills mobile screen */
-  .card {
-    margin: 8px !important;
-    padding: 16px !important;
+    max-height: 85vh !important;
+    margin: 12px !important;
     border-radius: 16px !important;
-    min-width: calc(100vw - 16px) !important;
+  }
+}
+
+/* ============================================
+   MOBILE WALLET BROWSER SPECIFIC (MetaMask, Rainbow, etc.)
+   ============================================ */
+@media screen and (max-width: 400px) {
+
+  /* Ultra-compact header */
+  header {
+    padding: 8px 6px !important;
   }
 
-  /* Larger touch targets for buttons */
-  .btn-blue {
-    width: 100% !important;
-    padding: 16px 24px !important;
-    font-size: 18px !important;
-    min-height: 56px;
-  }
-
-  /* Prevent iOS zoom on input focus */
-  input,
-  select,
-  textarea {
+  header h1 {
     font-size: 16px !important;
   }
 
-  /* Full-width inputs */
-  input[type="text"],
-  input[type="number"] {
-    width: 100% !important;
-    padding: 12px !important;
-    font-size: 18px !important;
+  /* Smallest wallet button */
+  .wallet-adapter-button {
+    font-size: 10px !important;
+    padding: 5px 8px !important;
+    max-width: 90px !important;
+    height: 32px !important;
   }
 
-  /* Better spacing */
-  h1 {
-    font-size: 24px !important;
+  header button {
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 14px !important;
+    min-width: 32px !important;
   }
 
-  h2 {
-    font-size: 20px !important;
+  /* Compress stats */
+  div[style*="gap: 48px"] {
+    gap: 8px !important;
+    padding: 8px 12px !important;
+    font-size: 12px !important;
+  }
+}
+
+/* ============================================
+   SAFE AREA INSETS (iPhone notch, etc.)
+   ============================================ */
+@supports (padding: env(safe-area-inset-top)) {
+  header {
+    padding-top: max(12px, env(safe-area-inset-top)) !important;
   }
 
-  h3 {
-    font-size: 18px !important;
+  footer {
+    padding-bottom: max(16px, env(safe-area-inset-bottom)) !important;
   }
 
-  /* Fix container width */
-  main,
-  [class*="container"] {
-    width: 100% !important;
-    max-width: 100vw !important;
-    padding: 8px !important;
+  main {
+    padding-left: max(8px, env(safe-area-inset-left)) !important;
+    padding-right: max(8px, env(safe-area-inset-right)) !important;
   }
 }
