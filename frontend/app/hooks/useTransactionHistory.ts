@@ -58,21 +58,35 @@ export function useTransactionHistory() {
                 const logs = tx.meta?.logMessages || [];
                 const isJsolValid = logs.some(log => log.includes(PROGRAM_ID.toString()));
 
-                if (isJsolValid) {
-                    // Check for specific instruction logs
-                    // Note: Anchor logs usually look like "Program log: Instruction: Deposit"
-                    if (logs.some(log => log.includes('Instruction: Deposit'))) {
+                // Check token balance changes to identify Mint (Deposit) or Burn (Withdraw)
+                const preTokenBal = tx.meta?.preTokenBalances?.find(b => b.owner === publicKey?.toString())?.uiTokenAmount.uiAmount || 0;
+                const postTokenBal = tx.meta?.postTokenBalances?.find(b => b.owner === publicKey?.toString())?.uiTokenAmount.uiAmount || 0;
+                const tokenChange = postTokenBal - preTokenBal;
+
+                if (isJsolValid || tokenChange !== 0) {
+                    // Strategy 1: Token Balance Change (Most Reliable)
+                    if (tokenChange > 0) {
                         type = 'Deposit';
-                        // Try to find the SOL transfer amount from the inner instructions or pre/post balances
+                        // Amount is roughly the SOL spent.
+                        // SOL spent = preSOL - postSOL - fee
+                        const preSol = (tx.meta?.preBalances[0] || 0) / 1e9;
+                        const postSol = (tx.meta?.postBalances[0] || 0) / 1e9;
+                        amount = Math.abs(preSol - postSol - fee);
+                    } else if (tokenChange < 0) {
+                        type = 'Withdraw';
+                        // Amount is SOL received
+                        const preSol = (tx.meta?.preBalances[0] || 0) / 1e9;
+                        const postSol = (tx.meta?.postBalances[0] || 0) / 1e9;
+                        amount = Math.abs(postSol - preSol - fee);
+                    }
+                    // Strategy 2: Fallback to Logs
+                    else if (logs.some(log => log.toLowerCase().includes('instruction: deposit'))) {
+                        type = 'Deposit';
                         const preBal = tx.meta?.preBalances[0] || 0;
                         const postBal = tx.meta?.postBalances[0] || 0;
-                        // Rough estimate for sender (index 0) paying for deposit
-                        // Deposit: balance goes down by amount + fee
-                        // amount = pre - post - fee_lamports
                         amount = Math.abs((preBal - postBal) - (tx.meta?.fee || 0)) / 1e9;
-                    } else if (logs.some(log => log.includes('Instruction: Withdraw'))) {
+                    } else if (logs.some(log => log.toLowerCase().includes('instruction: withdraw'))) {
                         type = 'Withdraw';
-                        // Withdraw: balance goes up
                         const preBal = tx.meta?.preBalances[0] || 0;
                         const postBal = tx.meta?.postBalances[0] || 0;
                         amount = (postBal - preBal + (tx.meta?.fee || 0)) / 1e9;
