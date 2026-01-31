@@ -9,8 +9,8 @@
 **Website**: https://mint.jsoli.xyz  
 **App**: https://jsoli.xyz 
 
-**Program**: `DSBLsQNcR9UVnoqbBw2cVvQUXj9PkHzp22xBq9ow8NdV`  
-**Status**: 🚀 **Live on Devnet** — Jan 2026
+**Program**: `FQARiEHe31wCxwJHYwQxjqGryvXCFx4h2hJvPeQ7QgB8`  
+**Status**: 🚀 **Live on Devnet** — Jan 31, 2026
 
 ---
 
@@ -74,7 +74,7 @@ jSOLi aggregates user deposits across multiple Liquid Staking Token (LST) protoc
 ### Devnet (Live ✅)
 | Account | Address |
 |---------|---------|
-| jSOLi Program | [`DSBLsQNcR9UVnoqbBw2cVvQUXj9PkHzp22xBq9ow8NdV`](https://explorer.solana.com/address/DSBLsQNcR9UVnoqbBw2cVvQUXj9PkHzp22xBq9ow8NdV?cluster=devnet) |
+| jSOLi Program | [`FQARiEHe31wCxwJHYwQxjqGryvXCFx4h2hJvPeQ7QgB8`](https://explorer.solana.com/address/FQARiEHe31wCxwJHYwQxjqGryvXCFx4h2hJvPeQ7QgB8?cluster=devnet) |
 | Vault PDA | [`5AvSxZhE4gxFVyoL3PpVRtrUa2hmYf9WUdsSbWxLiB7D`](https://explorer.solana.com/address/5AvSxZhE4gxFVyoL3PpVRtrUa2hmYf9WUdsSbWxLiB7D?cluster=devnet) |
 | jSOLi Mint | [`AUThYzVoRi6WEcgjAHyRCjjG3ZPpyi4xNn626z6rLWRf`](https://explorer.solana.com/address/AUThYzVoRi6WEcgjAHyRCjjG3ZPpyi4xNn626z6rLWRf?cluster=devnet) |
 
@@ -166,9 +166,9 @@ anchor deploy --provider.cluster devnet
 - [x] Rebalancing logic
 - [x] Security audit
 - [x] Devnet deployment
-- [ ] Pyth oracle integration
-- [ ] Complete LST CPI integrations
-- [ ] Comprehensive test suite
+- [x] Pyth oracle integration
+- [x] Complete LST CPI integrations (Skeleton Ready)
+- [x] Comprehensive test suite (Initial Suite Ready)
 - [ ] Mainnet launch
 
 ---

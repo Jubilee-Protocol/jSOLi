@@ -15,7 +15,7 @@ use crate::state::*;
 /// * `management_fee_bps` - Management fee in basis points (max 100)
 /// * `performance_fee_bps` - Performance fee in basis points (max 2000)
 /// * `deposit_cap` - Maximum total deposits allowed (0 = no cap)
-pub fn handler(
+pub fn initialize_handler(
     ctx: Context<Initialize>,
     allocations: Vec<InitAllocation>,
     management_fee_bps: u16,

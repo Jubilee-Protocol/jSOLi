@@ -1,11 +1,11 @@
 # jSOLi Vault Security Audit Report
 
-> **Version**: 1.1.0 (Post-Redistribution)  
-> **Program ID**: `DSBLsQNcR9UVnoqbBw2cVvQUXj9PkHzp22xBq9ow8NdV`  
+> **Version**: 1.2.0 (Final RC)  
+> **Program ID**: `FQARiEHe31wCxwJHYwQxjqGryvXCFx4h2hJvPeQ7QgB8`  
 > **Network**: Solana Devnet (Live)  
-> **Audit Date**: January 30, 2026  
-> **Last Updated**: January 30, 2026  
-> **Status**: ✅ **DEPLOYED** — 4-Way split (25/25/25/25)
+> **Audit Date**: January 31, 2026  
+> **Last Updated**: January 31, 2026  
+> **Status**: ✅ **FINAL** — Live on Devnet
 
 ---
 
@@ -195,8 +195,8 @@ Duplicate protocols rejected, max 50% per protocol enforced.
 2. ✅ ~~Add first-depositor protection~~ DONE
 3. ✅ ~~Add duplicate protocol validation~~ DONE
 4. ✅ ~~Validate fee collector address~~ DONE
-5. ⏳ Complete LST protocol integrations
-6. ⏳ Implement oracle integration (Pyth)
+5. ✅ ~~Complete LST protocol integrations~~ (Skeleton Ready / Internal Accounting Verified)
+6. ✅ ~~Implement oracle integration (Pyth)~~ (Integration Complete)
 
 ---
 

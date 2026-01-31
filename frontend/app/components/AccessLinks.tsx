@@ -11,7 +11,7 @@ interface AccessLinksProps {
 
 // Links configuration
 const LINKS = {
-    contract: 'https://explorer.solana.com/address/DSBLsQNcR9UVnoqbBw2cVvQUXj9PkHzp22xBq9ow8NdV?cluster=devnet',
+    contract: 'https://solscan.io/account/FQARiEHe31wCxwJHYwQxjqGryvXCFx4h2hJvPeQ7QgB8?cluster=devnet',
     audit: 'https://github.com/Jubilee-Protocol/jSOLi/blob/main/docs/AUDIT_REPORT.md',
     faq: 'https://github.com/Jubilee-Protocol/jSOLi#readme',
     learnMore: 'https://github.com/Jubilee-Protocol/jSOLi',
@@ -104,7 +104,7 @@ export function AccessLinks({ theme, isPaused, onTutorialClick, onTreasuryClick 
                 onMouseEnter={(e) => e.currentTarget.style.color = c.linkHover}
                 onMouseLeave={(e) => e.currentTarget.style.color = c.link}
             >
-                Contract ↗
+                Program ↗
             </a>
 
             <a

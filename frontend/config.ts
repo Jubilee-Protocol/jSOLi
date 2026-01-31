@@ -24,9 +24,9 @@ export const RPC_ENDPOINT = IS_LOCAL
 
 // Program IDs - All networks use the same deployed program
 const PROGRAM_IDS = {
-  local: 'DSBLsQNcR9UVnoqbBw2cVvQUXj9PkHzp22xBq9ow8NdV',
-  devnet: 'DSBLsQNcR9UVnoqbBw2cVvQUXj9PkHzp22xBq9ow8NdV',  // Deployed Jan 21, 2026
-  mainnet: 'DSBLsQNcR9UVnoqbBw2cVvQUXj9PkHzp22xBq9ow8NdV', // Same program ID
+  local: 'FQARiEHe31wCxwJHYwQxjqGryvXCFx4h2hJvPeQ7QgB8',
+  devnet: 'FQARiEHe31wCxwJHYwQxjqGryvXCFx4h2hJvPeQ7QgB8',  // Deployed Jan 2026
+  mainnet: 'FQARiEHe31wCxwJHYwQxjqGryvXCFx4h2hJvPeQ7QgB8', // Same program ID
 };
 
 export const PROGRAM_ID = new PublicKey(
@@ -59,11 +59,7 @@ export const LINKS = {
   twitter: 'https://twitter.com/jubileeprotocol',
   audit: 'https://github.com/Jubilee-Protocol/jSOLi/blob/main/docs/AUDIT_REPORT.md',
   docs: 'https://github.com/Jubilee-Protocol/jSOLi#readme',
-  explorer: IS_MAINNET
-    ? 'https://solscan.io'
-    : IS_LOCAL
-      ? 'http://localhost:8899'
-      : 'https://solscan.io/?cluster=devnet',
+  explorer: `https://solscan.io/account/${PROGRAM_ID.toString()}?cluster=${IS_MAINNET ? 'mainnet' : 'devnet'}`,
 };
 
 // Fee Display

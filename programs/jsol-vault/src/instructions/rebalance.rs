@@ -13,7 +13,7 @@ use crate::state::*;
 /// 
 /// # Arguments
 /// * `ctx` - The context containing all accounts
-pub fn handler(ctx: Context<Rebalance>) -> Result<()> {
+pub fn rebalance_handler(ctx: Context<Rebalance>) -> Result<()> {
     let vault = &mut ctx.accounts.vault;
     let clock = Clock::get()?;
     

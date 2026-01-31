@@ -14,7 +14,7 @@ use crate::utils::oracle::{get_pyth_price, pyth_feeds};
 /// # Arguments
 /// * `ctx` - The context containing all accounts
 /// * `amount` - Amount of lamports to deposit
-pub fn handler(ctx: Context<Deposit>, amount: u64) -> Result<()> {
+pub fn deposit_handler(ctx: Context<Deposit>, amount: u64) -> Result<()> {
     // Validate amount
     require!(amount > 0, VaultError::ZeroAmount);
     require!(amount >= MIN_DEPOSIT_LAMPORTS, VaultError::DepositBelowMinimum);
@@ -134,7 +134,7 @@ pub struct Deposit<'info> {
         seeds = [VAULT_SEED],
         bump = vault.bump
     )]
-    pub vault: Account<'info, VaultState>,
+    pub vault: Box<Account<'info, VaultState>>,
     
     /// The jSOLi token mint
     #[account(
@@ -142,7 +142,7 @@ pub struct Deposit<'info> {
         seeds = [JSOLI_MINT_SEED],
         bump
     )]
-    pub jsoli_mint: Account<'info, Mint>,
+    pub jsoli_mint: Box<Account<'info, Mint>>,
     
     /// User's jSOLi token account
     #[account(
@@ -151,7 +151,7 @@ pub struct Deposit<'info> {
         associated_token::mint = jsoli_mint,
         associated_token::authority = user
     )]
-    pub user_jsol_account: Account<'info, TokenAccount>,
+    pub user_jsol_account: Box<Account<'info, TokenAccount>>,
     
     /// User account for tracking position
     #[account(
@@ -161,7 +161,7 @@ pub struct Deposit<'info> {
         seeds = [USER_ACCOUNT_SEED, user.key().as_ref()],
         bump
     )]
-    pub user_account: Account<'info, UserAccount>,
+    pub user_account: Box<Account<'info, UserAccount>>,
     
     /// Vault's SOL holding account
     /// CHECK: This is a PDA that holds SOL

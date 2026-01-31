@@ -20,3 +20,7 @@ anchor-lang = { version = "0.29.0", features = ["init-if-needed"] }
 anchor-spl = "0.29.0"
 # Pin to avoid edition 2024 issue
 constant_time_eq = "=0.3.1"
+blake3 = "=1.5.5"
+pyth-sdk-solana = "0.10.0"
+spl-stake-pool = "1.0.0"
+spl-token = "4.0.0"

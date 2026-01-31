@@ -32,3 +32,4 @@ authority-keypair.json
 .yarn
 docs/QA_GUIDE.md
 docs/jSOLi_ONE_PAGER.md
+deploy-keypair.json

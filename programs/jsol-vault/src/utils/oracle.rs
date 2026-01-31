@@ -129,13 +129,20 @@ pub fn get_weighted_average_apy(
 }
 
 /// Get the price of an asset from Pyth
-pub fn get_pyth_price(_oracle_account: &AccountInfo, _max_age: i64) -> Result<OraclePrice> {
-    // In production, this would use the Pyth SDK to read the price account
-    // For now, return placeholder OraclePrice based on common usage
+pub fn get_pyth_price(oracle_account: &AccountInfo, max_age: i64) -> Result<OraclePrice> {
+    use pyth_sdk_solana::load_price_feed_from_account_info;
+
+    let price_feed = load_price_feed_from_account_info(oracle_account)
+        .map_err(|_| VaultError::InvalidOracleAccount)?;
+    
+    let current_time = Clock::get()?.unix_timestamp;
+    let price = price_feed.get_price_no_older_than(current_time, max_age.try_into().unwrap_or(0))
+        .ok_or(VaultError::StaleOraclePrice)?;
+
     Ok(OraclePrice {
-        price: 100_000_000_000,      // $100.00
-        confidence: 50_000_000,      // $0.05
-        timestamp: Clock::get()?.unix_timestamp,
+        price: price.price as u64,
+        confidence: price.conf,
+        timestamp: price.publish_time,
     })
 }
 
