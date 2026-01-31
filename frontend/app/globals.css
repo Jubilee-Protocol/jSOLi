@@ -162,6 +162,9 @@ input[type="number"]::-webkit-outer-spin-button {
 /* ============================================
    MOBILE RESPONSIVE STYLES - 768px and below
    ============================================ */
+/* ============================================
+   MOBILE RESPONSIVE STYLES - 768px and below
+   ============================================ */
 @media screen and (max-width: 768px) {
   html {
     font-size: 15px;
@@ -173,8 +176,8 @@ input[type="number"]::-webkit-outer-spin-button {
 
   /* Header - prevent cutoff */
   header {
-    padding: 12px 12px !important;
-    gap: 8px !important;
+    padding: 12px 16px !important;
+    gap: 12px !important;
     flex-wrap: wrap !important;
   }
 
@@ -194,23 +197,25 @@ input[type="number"]::-webkit-outer-spin-button {
 
   /* Header buttons row - theme, treasury, wallet */
   header>div:last-child {
-    gap: 6px !important;
+    gap: 8px !important;
     flex-wrap: nowrap !important;
   }
 
   /* Theme and treasury buttons */
   header button {
-    width: 36px !important;
-    height: 36px !important;
-    font-size: 16px !important;
-    min-width: 36px !important;
+    width: 40px !important;
+    height: 40px !important;
+    font-size: 18px !important;
+    min-width: 40px !important;
   }
 
   /* Wallet button - critical fix */
   .wallet-adapter-button {
-    font-size: 12px !important;
-    padding: 8px 12px !important;
-    max-width: 130px !important;
+    font-size: 13px !important;
+    padding: 0 16px !important;
+    height: 40px !important;
+    line-height: 40px !important;
+    max-width: 140px !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
   }
@@ -218,7 +223,7 @@ input[type="number"]::-webkit-outer-spin-button {
   .wallet-adapter-button-start-icon {
     width: 20px !important;
     height: 20px !important;
-    margin-right: 6px !important;
+    margin-right: 8px !important;
   }
 
   /* Devnet banner - stack on mobile */
@@ -231,20 +236,22 @@ input[type="number"]::-webkit-outer-spin-button {
 
   /* Stats bar */
   div[style*="gap: 48px"] {
-    gap: 16px !important;
+    gap: 24px !important;
     flex-wrap: wrap !important;
-    padding: 12px 16px !important;
+    padding: 16px !important;
+    justify-content: space-evenly !important;
+    /* Better distribution */
   }
 
   /* Main card */
   main {
-    padding: 8px !important;
+    padding: 16px !important;
   }
 
   .card {
     margin: 0 !important;
-    border-radius: 16px !important;
-    padding: 16px !important;
+    border-radius: 20px !important;
+    padding: 24px !important;
     width: 100% !important;
     max-width: 100% !important;
   }
@@ -252,17 +259,19 @@ input[type="number"]::-webkit-outer-spin-button {
   /* Form inputs */
   input[type="text"],
   input[type="number"] {
-    font-size: 18px !important;
+    font-size: 24px !important;
+    /* Larger for better readability */
   }
 
   /* Large touch targets */
   button {
-    min-height: 44px;
+    min-height: 48px;
+    /* Standard accessible touch target */
   }
 
   /* Footer */
   footer {
-    padding: 16px !important;
+    padding: 24px 16px !important;
   }
 }
 

@@ -112,12 +112,16 @@ export function TutorialModal({ isOpen, onClose, theme, solPrice = 150 }: Tutori
                 boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
                 border: `1px solid ${c.border}`,
                 overflow: 'hidden',
+                display: 'flex',
+                flexDirection: 'column',
+                maxHeight: '90vh', // Ensure it fits on screen
             }}>
                 {/* Header */}
                 <div style={{
                     background: `linear-gradient(135deg, #9945FF 0%, #14F195 100%)`, // Solana Gradient
                     padding: '24px',
                     textAlign: 'center',
+                    flexShrink: 0, // Prevent header from shrinking
                 }}>
                     <h2 style={{
                         color: 'white',
@@ -136,7 +140,11 @@ export function TutorialModal({ isOpen, onClose, theme, solPrice = 150 }: Tutori
                 </div>
 
                 {/* Content */}
-                <div style={{ padding: '24px' }}>
+                <div style={{
+                    padding: '24px',
+                    overflowY: 'auto', // Allow scrolling
+                    flex: 1, // Take up remaining space
+                }}>
                     {step === 1 && (
                         <div>
                             <h3 style={{ color: c.text, fontSize: '18px', marginBottom: '16px' }}>
@@ -288,6 +296,9 @@ export function TutorialModal({ isOpen, onClose, theme, solPrice = 150 }: Tutori
                     justifyContent: 'space-between',
                     padding: '24px',
                     gap: '12px',
+                    flexShrink: 0, // Prevent footer from shrinking
+                    borderTop: `1px solid ${c.border}`, // Add subtle separation
+                    background: c.card, // Ensure background matches
                 }}>
                     {step === 1 ? (
                         <button
