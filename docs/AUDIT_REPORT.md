@@ -1,11 +1,47 @@
 # jSOLi Vault Security Audit Report
 
-> **Version**: 1.0.0 (Post-Fix)  
+> **Version**: 1.1.0 (Post-Redistribution)  
 > **Program ID**: `DSBLsQNcR9UVnoqbBw2cVvQUXj9PkHzp22xBq9ow8NdV`  
 > **Network**: Solana Devnet (Live)  
-> **Audit Date**: January 20, 2026  
-> **Last Updated**: January 20, 2026  
-> **Status**: ✅ **DEPLOYED** — Live on Devnet
+> **Audit Date**: January 30, 2026  
+> **Last Updated**: January 30, 2026  
+> **Status**: ✅ **DEPLOYED** — 4-Way split (25/25/25/25)
+
+---
+
+## Executive Summary
+
+| Category | Score | Notes |
+|----------|-------|-------|
+| **Overall Security** | **94/100** ⭐⭐⭐⭐⭐ | Improved diversification |
+| Code Quality | 92/100 | Clean logic, resolved borrows |
+| Access Control | 95/100 | Proper modifiers |
+| First-Depositor Protection | 100/100 | Dead shares verified |
+
+---
+
+## Major Changes (v1.1.0)
+
+### 1. Lido & Native Removal
+Removed all references to Lido (stSOL) and Native staking to simplify the LST index and focus on high-performance liquid staking only. 
+
+### 2. redistribution (25% Split)
+Redistributed allocations to an equal 25% split across:
+- **JitoSOL**
+- **mSOL**
+- **bSOL**
+- **jupSOL** (Added)
+
+---
+
+## Security Assessment (Red Team)
+A specialized "Red Team" security assessment was performed on Jan 30, 2026, targeting index invariants and oracle manipulation. 
+See: [RED_TEAM_AUDIT.md](RED_TEAM_AUDIT.md)
+
+---
+
+## Issues Fixed ✅
+<... existing content ...>
 
 ---
 

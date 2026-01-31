@@ -33,13 +33,12 @@ jSOLi aggregates user deposits across multiple Liquid Staking Token (LST) protoc
 
 | Protocol | Allocation | Token | Est. APY |
 |----------|------------|-------|----------|
-| Jito | 30% | jitoSOL | ~7.5% (incl. MEV) |
-| Marinade | 30% | mSOL | ~6.7% |
-| BlazeStake | 20% | bSOL | ~6.8% |
-| Lido | 10% | stSOL | ~6.5% |
-| Native | 10% | SOL | ~6.0% |
+| Jito | 25% | jitoSOL | ~7.5% (incl. MEV) |
+| Marinade | 25% | mSOL | ~6.7% |
+| BlazeStake | 25% | bSOL | ~6.8% |
+| Jupiter | 25% | jupSOL | ~7.0% |
 
-**Target Blended APY**: 6.8-7.2%
+**Target Blended APY**: 6.9-7.3%
 
 ---
 
@@ -155,7 +154,7 @@ anchor deploy --provider.cluster devnet
 | Marinade | `MarBmsSg...` | Instant (0.3% fee) or delayed |
 | Jito | `Jito4APy...` | Instant (0.1% fee) |
 | BlazeStake | `stk9ApL5...` | ~2 days |
-| Lido | `CrX7kMhL...` | ~3 days |
+| Jupiter | `jupS7...` | ~3 days |
 
 ---
 
