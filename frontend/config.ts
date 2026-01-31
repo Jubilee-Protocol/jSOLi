@@ -71,16 +71,15 @@ export const MANAGEMENT_FEE_DISPLAY = '0.5%';
 export const PERFORMANCE_FEE_DISPLAY = '10%';
 
 // Target APY (for display)
-export const TARGET_APY_LOW = 6.8;
-export const TARGET_APY_HIGH = 7.2;
+export const TARGET_APY_LOW = 6.9;
+export const TARGET_APY_HIGH = 7.3;
 
 // Protocol Allocations (for display)
 export const ALLOCATIONS = [
-  { protocol: 'Jito', percentage: 30, color: '#FF6B6B' },
-  { protocol: 'Marinade', percentage: 30, color: '#4ECDC4' },
-  { protocol: 'BlazeStake', percentage: 20, color: '#45B7D1' },
-  { protocol: 'Lido', percentage: 10, color: '#96CEB4' },
-  { protocol: 'Native', percentage: 10, color: '#FFEAA7' },
+  { protocol: 'Jito', percentage: 25, color: '#FF6B6B' },
+  { protocol: 'Marinade', percentage: 25, color: '#4ECDC4' },
+  { protocol: 'BlazeStake', percentage: 25, color: '#45B7D1' },
+  { protocol: 'jupSOL', percentage: 25, color: '#9945FF' },
 ];
 
 // Wallet Configuration
