@@ -215,9 +215,11 @@ input[type="number"]::-webkit-outer-spin-button {
     padding: 0 16px !important;
     height: 40px !important;
     line-height: 40px !important;
-    max-width: 140px !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
+    max-width: none !important;
+    /* Allow full width */
+    flex-shrink: 0 !important;
+    /* Prevent squishing */
+    width: auto !important;
   }
 
   .wallet-adapter-button-start-icon {

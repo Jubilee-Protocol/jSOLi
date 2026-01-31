@@ -58,6 +58,9 @@ export function TreasuryModal({ isOpen, onClose, theme }: TreasuryModalProps) {
                 width: '100%',
                 boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.4)',
                 border: theme === 'dark' ? '1px solid rgba(153, 69, 255, 0.3)' : 'none',
+                display: 'flex',
+                flexDirection: 'column',
+                maxHeight: '90vh', // Ensure it doesn't exceed screen height
             }}>
                 {/* Header */}
                 <div style={{
@@ -66,6 +69,7 @@ export function TreasuryModal({ isOpen, onClose, theme }: TreasuryModalProps) {
                     justifyContent: 'space-between',
                     padding: '20px 24px',
                     borderBottom: `1px solid ${theme === 'dark' ? 'rgba(255,255,255,0.1)' : '#e5e7eb'}`,
+                    flexShrink: 0, // Prevent header from shrinking
                 }}>
                     <div style={{
                         display: 'flex',
@@ -98,7 +102,11 @@ export function TreasuryModal({ isOpen, onClose, theme }: TreasuryModalProps) {
                 </div>
 
                 {/* Content */}
-                <div style={{ padding: '24px' }}>
+                <div style={{
+                    padding: '24px',
+                    overflowY: 'auto', // Allow scrolling
+                    flex: 1, // Fill available space
+                }}>
                     <h3 style={{
                         fontSize: '18px',
                         fontWeight: '600',
