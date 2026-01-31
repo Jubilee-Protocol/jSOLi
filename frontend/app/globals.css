@@ -160,7 +160,7 @@ input[type="number"]::-webkit-outer-spin-button {
 }
 
 /* ============================================
-   MOBILE RESPONSIVE STYLES - 768px and below
+   MOBILE RESPONSIVE ADJUSTMENTS
    ============================================ */
 @media screen and (max-width: 768px) {
   html {
@@ -170,254 +170,6 @@ input[type="number"]::-webkit-outer-spin-button {
   body {
     padding-bottom: env(safe-area-inset-bottom);
   }
-
-  /* Header - prevent cutoff */
-  header {
-    padding: 12px 12px !important;
-    gap: 8px !important;
-    flex-wrap: wrap !important;
-  }
-
-  /* Logo section */
-  header>div:first-child {
-    gap: 8px !important;
-  }
-
-  header img {
-    width: 28px !important;
-    height: 28px !important;
-  }
-
-  header h1 {
-    font-size: 20px !important;
-  }
-
-  /* Header buttons row - theme, treasury, wallet */
-  header>div:last-child {
-    gap: 6px !important;
-    flex-wrap: nowrap !important;
-  }
-
-  /* Theme and treasury buttons */
-  header button {
-    width: 36px !important;
-    height: 36px !important;
-    font-size: 16px !important;
-    min-width: 36px !important;
-  }
-
-  /* Wallet button - critical fix */
-  .wallet-adapter-button {
-    font-size: 12px !important;
-    padding: 8px 12px !important;
-    max-width: 130px !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-  }
-
-  .wallet-adapter-button-start-icon {
-    width: 20px !important;
-    height: 20px !important;
-    margin-right: 6px !important;
-  }
-
-  /* Devnet banner - stack on mobile */
-  .devnet-banner,
-  div[style*="linear-gradient(90deg, #FF6B35"] {
-    flex-direction: column !important;
-    gap: 8px !important;
-    padding: 10px 16px !important;
-  }
-
-  /* Stats bar */
-  div[style*="gap: 48px"] {
-    gap: 16px !important;
-    flex-wrap: wrap !important;
-    padding: 12px 16px !important;
-  }
-
-  /* Main card */
-  main {
-    padding: 8px !important;
-  }
-
-  .card {
-    margin: 0 !important;
-    border-radius: 16px !important;
-    padding: 16px !important;
-    width: 100% !important;
-    max-width: 100% !important;
-  }
-
-  /* Form inputs */
-  input[type="text"],
-  input[type="number"] {
-    font-size: 18px !important;
-  }
-
-  /* Large touch targets */
-  button {
-    min-height: 44px;
-  }
-
-  /* Footer */
-  footer {
-    padding: 16px !important;
-  }
-}
-
-/* ============================================
-   MOBILE RESPONSIVE STYLES - 480px and below
-   ============================================ */
-@media screen and (max-width: 480px) {
-  html {
-    font-size: 16px !important;
-    /* Prevents iOS zoom on input focus */
-  }
-
-  body {
-    min-width: 100vw;
-    padding: 0 !important;
-    margin: 0 !important;
-  }
-
-  /* Header - two-row layout on very small screens */
-  header {
-    padding: 10px 8px !important;
-  }
-
-  header h1 {
-    font-size: 18px !important;
-  }
-
-  /* Wallet button - even more compact */
-  .wallet-adapter-button {
-    font-size: 11px !important;
-    padding: 6px 10px !important;
-    max-width: 110px !important;
-    height: 36px !important;
-  }
-
-  /* Hide wallet icon on very small screens to save space */
-  .wallet-adapter-button-start-icon {
-    display: none !important;
-  }
-
-  /* Devnet banner text */
-  .devnet-banner span,
-  div[style*="linear-gradient(90deg, #FF6B35"] span {
-    font-size: 12px !important;
-  }
-
-  /* Stats - single column on very small */
-  div[style*="gap: 48px"] {
-    gap: 12px !important;
-  }
-
-  div[style*="gap: 48px"]>div {
-    min-width: 80px !important;
-  }
-
-  /* Heading sizes */
-  h1 {
-    font-size: 22px !important;
-  }
-
-  h2 {
-    font-size: 18px !important;
-  }
-
-  h3 {
-    font-size: 16px !important;
-  }
-
-  /* Form sections */
-  .card {
-    padding: 12px !important;
-  }
-
-  /* Primary action buttons - full width */
-  .btn-purple,
-  button[style*="background: linear-gradient"],
-  button[style*="background: #9945FF"] {
-    width: 100% !important;
-    padding: 14px 20px !important;
-    font-size: 16px !important;
-    min-height: 52px !important;
-  }
-
-  /* Prevent iOS zoom on input focus */
-  input,
-  select,
-  textarea {
-    font-size: 16px !important;
-  }
-
-  /* Full-width inputs */
-  input[type="text"],
-  input[type="number"] {
-    width: 100% !important;
-    padding: 10px !important;
-  }
-
-  /* Tab buttons */
-  button[style*="cursor: pointer"][style*="font-weight"] {
-    font-size: 14px !important;
-    padding: 8px 16px !important;
-  }
-
-  /* Access links - stack */
-  footer>div {
-    flex-direction: column !important;
-    gap: 8px !important;
-    align-items: center !important;
-  }
-
-  /* Modal adjustments */
-  div[style*="position: fixed"][style*="inset: 0"]>div {
-    width: calc(100vw - 24px) !important;
-    max-width: none !important;
-    max-height: 85vh !important;
-    margin: 12px !important;
-    border-radius: 16px !important;
-  }
-}
-
-/* ============================================
-   MOBILE WALLET BROWSER SPECIFIC (MetaMask, Rainbow, etc.)
-   ============================================ */
-@media screen and (max-width: 400px) {
-
-  /* Ultra-compact header */
-  header {
-    padding: 8px 6px !important;
-  }
-
-  header h1 {
-    font-size: 16px !important;
-  }
-
-  /* Smallest wallet button */
-  .wallet-adapter-button {
-    font-size: 10px !important;
-    padding: 5px 8px !important;
-    max-width: 90px !important;
-    height: 32px !important;
-  }
-
-  header button {
-    width: 32px !important;
-    height: 32px !important;
-    font-size: 14px !important;
-    min-width: 32px !important;
-  }
-
-  /* Compress stats */
-  div[style*="gap: 48px"] {
-    gap: 8px !important;
-    padding: 8px 12px !important;
-    font-size: 12px !important;
-  }
 }
 
 /* ============================================
@@ -425,15 +177,15 @@ input[type="number"]::-webkit-outer-spin-button {
    ============================================ */
 @supports (padding: env(safe-area-inset-top)) {
   header {
-    padding-top: max(12px, env(safe-area-inset-top)) !important;
+    padding-top: max(12px, env(safe-area-inset-top));
   }
 
   footer {
-    padding-bottom: max(16px, env(safe-area-inset-bottom)) !important;
+    padding-bottom: max(16px, env(safe-area-inset-bottom));
   }
 
   main {
-    padding-left: max(8px, env(safe-area-inset-left)) !important;
-    padding-right: max(8px, env(safe-area-inset-right)) !important;
+    padding-left: max(8px, env(safe-area-inset-left));
+    padding-right: max(8px, env(safe-area-inset-right));
   }
 }
