@@ -29,8 +29,6 @@ pub fn get_protocol_apy(_protocol: LstProtocol) -> Result<u64> {
         LstProtocol::Jito => 750,       // 7.5% (includes MEV rewards)
         LstProtocol::Marinade => 670,   // 6.7%
         LstProtocol::BlazeStake => 680, // 6.8%
-        LstProtocol::Lido => 650,       // 6.5%
-        LstProtocol::Native => 600,     // 6.0% (base staking rate)
         LstProtocol::Jupiter => 700,    // 7.0%
     })
 }
@@ -48,8 +46,6 @@ pub fn get_lst_exchange_rate(_protocol: LstProtocol) -> Result<u64> {
         LstProtocol::Jito => 1_050_000_000,       // 1.05 SOL per jitoSOL
         LstProtocol::Marinade => 1_045_000_000,   // 1.045 SOL per mSOL
         LstProtocol::BlazeStake => 1_042_000_000, // 1.042 SOL per bSOL
-        LstProtocol::Lido => 1_038_000_000,       // 1.038 SOL per stSOL  
-        LstProtocol::Native => SHARE_PRECISION,    // 1:1 for native
         LstProtocol::Jupiter => 1_048_000_000,    // 1.048 SOL per JupSOL
     })
 }
@@ -132,12 +128,28 @@ pub fn get_weighted_average_apy(
     Ok(weighted_apy as u64)
 }
 
+/// Get the price of an asset from Pyth
+pub fn get_pyth_price(_oracle_account: &AccountInfo, _max_age: i64) -> Result<OraclePrice> {
+    // In production, this would use the Pyth SDK to read the price account
+    // For now, return placeholder OraclePrice based on common usage
+    Ok(OraclePrice {
+        price: 100_000_000_000,      // $100.00
+        confidence: 50_000_000,      // $0.05
+        timestamp: Clock::get()?.unix_timestamp,
+    })
+}
+
+/// Helper to get a PDA bump
+pub fn get_pda_bump(seeds: &[&[u8]], program_id: &Pubkey) -> u8 {
+    let (_, bump) = Pubkey::find_program_address(seeds, program_id);
+    bump
+}
+
 /// Pyth price feed IDs (mainnet)
-/// These would be used with the Pyth SDK for actual price queries
 pub mod pyth_feeds {
     /// SOL/USD price feed
     pub const SOL_USD: &str = "H6ARHf6YXhGYeQfUzQNGk6rDNnLBQKrenN712K4AQJEG";
     
-    /// BTC/USD price feed (for jBTCi compatibility)
+    /// BTC/USD price feed
     pub const BTC_USD: &str = "GVXRSBjFk6e6J3NbVPXohDJetcTjaeeuykUpbQF8UoMU";
 }

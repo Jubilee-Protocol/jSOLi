@@ -1,8 +1,8 @@
-# jSOLi Technical Walkthrough
+# jSOLi Technical Walkthrough 
 
 This document provides a technical overview of the jSOLi (Jubilee Staking Index) protocol, detailing the architecture, core logic, and user flows. It serves as a reference for developers, auditors, and partners.
 
-## 1. Architecture Overview
+## 1. Architecture Overview 
 
 jSOLi is built on the Solana blockchain using the Anchor framework. It operates as a non-custodial vault that aggregates user SOL deposits and routes them to whitelisted Liquid Staking Token (LST) protocols.
 
@@ -12,7 +12,7 @@ jSOLi is built on the Solana blockchain using the Anchor framework. It operates 
 - **jSOLi Mint**: The SPL Token representing a share of the vault's diversified portfolio.
 - **Vault PDA**: The Program Derived Address that holds the SOL and LST assets.
 
-## 2. Core Logic & Flows
+## 2. Core Logic & Flows 
 
 ### A. Deposit Flow
 The deposit process converts user SOL into jSOLi shares.
@@ -54,7 +54,7 @@ Unlike standard swaps, withdrawing from LSTs often requires a cooldown period (u
     *   Pending request is cleared.
     *   Corresponding shares are finally burned if held in escrow.
 
-### C. Rebalancing (The "Brain")
+### C. Rebalancing (The "Brain") 
 The rebalance instruction maintains the target portfolio weights.
 
 1.  **Trigger**: Permissionless (anyone can call it), incentivized or keeper-run.
@@ -80,7 +80,7 @@ The rebalance instruction maintains the target portfolio weights.
 | `set_emergency_mode` | Bypasses cooldowns (if liquid) in crisis. | Admin |
 | `update_fees` | Changes management/performance fees. | Admin (Timelock*) |
 
-## 4. Measuring Performance (APY)
+## 4. Measuring Performance (APY) 
 
 **The Concept:**
 jSOLi is an **appreciating token**.
@@ -95,7 +95,7 @@ jSOLi is an **appreciating token**.
 **Visualization:**
 To show this visually, fetch the historical "Exchange Rate" (Vault SOL Balance / Supply) daily and plot it. A steep line = high APY.
 
-## 5. Mainnet Readiness Checklist
+## 5. Mainnet Readiness Checklist 
 
 To move from Devnet to Mainnet (`TBD` -> Real Address), we need:
 

@@ -11,8 +11,14 @@ describe("jsol-vault", () => {
   it("Is initialized!", async () => {
     // Add your test here.
     // Initialize with default values
-    const allocations = [{ protocol: 1, targetBps: 1000 }]; // 10% to protocol 1 (Marinade)
-    const managementFeeBps = 100; // 1%
+    // Initialize with 4-protocol split @ 25% each
+    const allocations = [
+      { protocol: 0, targetBps: 2500 }, // Jito
+      { protocol: 1, targetBps: 2500 }, // Marinade
+      { protocol: 2, targetBps: 2500 }, // BlazeStake
+      { protocol: 3, targetBps: 2500 }  // Jupiter
+    ];
+    const managementFeeBps = 50; // 0.5%
     const performanceFeeBps = 1000; // 10%
     const depositCap = new anchor.BN(1000 * 1_000_000_000); // 1000 SOL
 

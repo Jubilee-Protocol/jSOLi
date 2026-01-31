@@ -96,9 +96,9 @@ pub const DEFAULT_REBALANCE_THRESHOLD_BPS: u16 = 500;
 /// Minimum time between rebalances: 1 hour (3600 seconds)
 pub const MIN_REBALANCE_INTERVAL_SECS: i64 = 3600;
 
-// ============================================================================
+// ============================================
 // Protocol Program IDs (Mainnet)
-// ============================================================================
+// ============================================
 
 /// Marinade Finance Program ID
 pub const MARINADE_PROGRAM_ID: &str = "MarBmsSgKXdrN1egZf5sqe1TMai9K1rChYNDJgjq7aD";
@@ -109,15 +109,12 @@ pub const JITO_PROGRAM_ID: &str = "Jito4APyf642JPZPx3hGc6WWJ8zPKtRbRs4P815Awbb";
 /// BlazeStake Program ID
 pub const BLAZESTAKE_PROGRAM_ID: &str = "stk9ApL5HeVAwPLr3TLhDXdZS8ptVu7zp6ov8HFDuMi";
 
-/// Lido (Solido) Program ID
-pub const LIDO_PROGRAM_ID: &str = "CrX7kMhLC3cSsXJdT7JDgqrRVWGnUpX3gfEfxxU2NVLi";
-
 /// Jupiter Staked SOL Program ID
 pub const JUPITER_PROGRAM_ID: &str = "jupSoLaHXQiZZTSfEWMTRRgpnyFm8f6sZdosWBjx93v";
 
-// ============================================================================
+// ============================================
 // LST Token Mints (Mainnet)
-// ============================================================================
+// ============================================
 
 /// Jito staked SOL (jitoSOL) mint
 pub const JITO_SOL_MINT: &str = "J1toso1uCk3RLmjorhTtrVwY9HJ7X8V9yYac6Y7kGCPn";
@@ -128,5 +125,5 @@ pub const MSOL_MINT: &str = "mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So";
 /// BlazeStake SOL (bSOL) mint
 pub const BSOL_MINT: &str = "bSo13r4TkiE4KumL71LsHTPpL2euBYLFx6h9HP3piy1";
 
-/// Lido staked SOL (stSOL) mint
-pub const STSOL_MINT: &str = "7dHbWXmci3dT8UFYWYZweBLXgycu7Y3iL6trKn1Y7ARj";
+/// Jupiter staked SOL (jupSOL) mint
+pub const JUPSOL_MINT: &str = "jupSoLaHXQiZZTSfEWMTRRgpnyFm8f6sZdosWBjx93v";

@@ -19,11 +19,13 @@
 jSOLi aggregates user deposits across multiple Liquid Staking Token (LST) protocols on Solana, automatically rebalancing to optimize yield. Users deposit SOL and receive jSOLi shares representing their proportional ownership.
 
 ### Key Features
-
-- **Passive Strategy** - Deposit SOL, earn optimized staking rewards
-- **Diversified** - Spread across Jito, Marinade, BlazeStake, Lido & native staking  
-- **Auto-Rebalancing** - Adjusts allocations when APYs shift
-- **Secure** - Circuit breakers, oracle validation, pause mechanism
+- Aggregate SOL across multiple LST protocols (Jito, Marinade, BlazeStake, Jupiter)
+- 25% Equal Weighting for maximum decentralization and yield stability
+- Automated rebalancing based on APY optimization
+- Share-based accounting (jSOLi token)
+- Management and performance fees
+- Emergency pause mechanism
+- Two-step withdrawal with unbonding period
 
 ---
 

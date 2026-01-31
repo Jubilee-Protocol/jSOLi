@@ -1,0 +1,554 @@
+    Checking jsol-vault v0.1.0 (/Users/cmpgfb/jSOL/jsol-vault/programs/jsol-vault)
+error: init_if_needed requires that anchor-lang be imported with the init-if-needed cargo feature enabled. Carefully read the init_if_needed docs before using this feature to make sure you know how to protect yourself against re-initialization attacks.
+   --> programs/jsol-vault/src/instructions/deposit.rs:149:9
+    |
+149 | ...   init_if_needed,
+    |       ^^^^^^^^^^^^^^
+
+error[E0432]: unresolved import `crate::utils::oracle::get_pyth_price`
+  --> programs/jsol-vault/src/instructions/deposit.rs:10:28
+   |
+10 | ...::{get_pyth_price, p...
+   |       ^^^^^^^^^^^^^^ no `get_pyth_price` in `utils::oracle`
+
+error[E0432]: unresolved import `crate`
+  --> programs/jsol-vault/src/lib.rs:31:1
+   |
+31 | #[program]
+   | ^^^^^^^^^^ could not find `__client_accounts_deposit` in the crate root
+   |
+   = note: this error originates in the attribute macro `program` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unexpected `cfg` condition value: `custom-heap`
+  --> programs/jsol-vault/src/lib.rs:31:1
+   |
+31 | #[program]
+   | ^^^^^^^^^^
+   |
+   = note: expected values for `feature` are: `cpi`, `default`, `no-entrypoint`, `no-idl`, and `no-log-ix-name`
+   = note: using a cfg inside a macro will use the cfgs from the destination crate and not the ones from the defining crate
+   = help: try referring to `$crate::custom_heap_default` crate for guidance on how handle this unexpected cfg
+   = help: the macro `$crate::custom_heap_default` may come from an old version of the `solana_program` crate, try updating your dependency with `cargo update -p solana_program`
+   = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+   = note: `#[warn(unexpected_cfgs)]` on by default
+   = note: this warning originates in the macro `$crate::custom_heap_default` which comes from the expansion of the attribute macro `program` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unexpected `cfg` condition value: `solana`
+  --> programs/jsol-vault/src/lib.rs:31:1
+   |
+31 | #[program]
+   | ^^^^^^^^^^
+   |
+   = note: expected values for `target_os` are: `aix`, `amdhsa`, `android`, `cuda`, `cygwin`, `dragonfly`, `emscripten`, `espidf`, `freebsd`, `fuchsia`, `haiku`, `helenos`, `hermit`, `horizon`, `hurd`, `illumos`, `ios`, `l4re`, `linux`, `lynxos178`, `macos`, `managarm`, `motor`, `netbsd`, `none`, `nto`, `nuttx`, `openbsd`, `psp`, `psx`, `qurt`, `redox`, `rtems`, `solaris`, and `solid_asp3` and 14 more
+   = note: using a cfg inside a macro will use the cfgs from the destination crate and not the ones from the defining crate
+   = help: try referring to `$crate::custom_heap_default` crate for guidance on how handle this unexpected cfg
+   = help: the macro `$crate::custom_heap_default` may come from an old version of the `solana_program` crate, try updating your dependency with `cargo update -p solana_program`
+   = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+   = note: this warning originates in the macro `$crate::custom_heap_default` which comes from the expansion of the attribute macro `program` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unexpected `cfg` condition value: `custom-panic`
+  --> programs/jsol-vault/src/lib.rs:31:1
+   |
+31 | #[program]
+   | ^^^^^^^^^^
+   |
+   = note: expected values for `feature` are: `cpi`, `default`, `no-entrypoint`, `no-idl`, and `no-log-ix-name`
+   = note: using a cfg inside a macro will use the cfgs from the destination crate and not the ones from the defining crate
+   = help: try referring to `$crate::custom_panic_default` crate for guidance on how handle this unexpected cfg
+   = help: the macro `$crate::custom_panic_default` may come from an old version of the `solana_program` crate, try updating your dependency with `cargo update -p solana_program`
+   = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+   = note: this warning originates in the macro `$crate::custom_panic_default` which comes from the expansion of the attribute macro `program` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unexpected `cfg` condition value: `solana`
+  --> programs/jsol-vault/src/lib.rs:31:1
+   |
+31 | #[program]
+   | ^^^^^^^^^^
+   |
+   = note: expected values for `target_os` are: `aix`, `amdhsa`, `android`, `cuda`, `cygwin`, `dragonfly`, `emscripten`, `espidf`, `freebsd`, `fuchsia`, `haiku`, `helenos`, `hermit`, `horizon`, `hurd`, `illumos`, `ios`, `l4re`, `linux`, `lynxos178`, `macos`, `managarm`, `motor`, `netbsd`, `none`, `nto`, `nuttx`, `openbsd`, `psp`, `psx`, `qurt`, `redox`, `rtems`, `solaris`, and `solid_asp3` and 14 more
+   = note: using a cfg inside a macro will use the cfgs from the destination crate and not the ones from the defining crate
+   = help: try referring to `$crate::custom_panic_default` crate for guidance on how handle this unexpected cfg
+   = help: the macro `$crate::custom_panic_default` may come from an old version of the `solana_program` crate, try updating your dependency with `cargo update -p solana_program`
+   = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+   = note: this warning originates in the macro `$crate::custom_panic_default` which comes from the expansion of the attribute macro `program` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unused import: `anchor_lang::prelude::*`
+ --> programs/jsol-vault/src/constants.rs:5:5
+  |
+5 | use anchor_lang::prelude::*;
+  |     ^^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unexpected `cfg` condition value: `anchor-debug`
+   --> programs/jsol-vault/src/instructions/initialize.rs:125:10
+    |
+125 | #[derive(Accounts)]
+    |          ^^^^^^^^
+    |
+    = note: expected values for `feature` are: `cpi`, `default`, `no-entrypoint`, `no-idl`, and `no-log-ix-name`
+    = note: using a cfg inside a derive macro will use the cfgs from the destination crate and not the ones from the defining crate
+    = help: try referring to `Accounts` crate for guidance on how handle this unexpected cfg
+    = help: the derive macro `Accounts` may come from an old version of the `anchor_derive_accounts` crate, try updating your dependency with `cargo update -p anchor_derive_accounts`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+    = note: this warning originates in the derive macro `Accounts` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unexpected `cfg` condition value: `anchor-debug`
+   --> programs/jsol-vault/src/instructions/withdraw.rs:171:10
+    |
+171 | #[derive(Accounts)]
+    |          ^^^^^^^^
+    |
+    = note: expected values for `feature` are: `cpi`, `default`, `no-entrypoint`, `no-idl`, and `no-log-ix-name`
+    = note: using a cfg inside a derive macro will use the cfgs from the destination crate and not the ones from the defining crate
+    = help: try referring to `Accounts` crate for guidance on how handle this unexpected cfg
+    = help: the derive macro `Accounts` may come from an old version of the `anchor_derive_accounts` crate, try updating your dependency with `cargo update -p anchor_derive_accounts`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+    = note: this warning originates in the derive macro `Accounts` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unexpected `cfg` condition value: `anchor-debug`
+   --> programs/jsol-vault/src/instructions/withdraw.rs:212:10
+    |
+212 | #[derive(Accounts)]
+    |          ^^^^^^^^
+    |
+    = note: expected values for `feature` are: `cpi`, `default`, `no-entrypoint`, `no-idl`, and `no-log-ix-name`
+    = note: using a cfg inside a derive macro will use the cfgs from the destination crate and not the ones from the defining crate
+    = help: try referring to `Accounts` crate for guidance on how handle this unexpected cfg
+    = help: the derive macro `Accounts` may come from an old version of the `anchor_derive_accounts` crate, try updating your dependency with `cargo update -p anchor_derive_accounts`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+    = note: this warning originates in the derive macro `Accounts` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unexpected `cfg` condition value: `anchor-debug`
+   --> programs/jsol-vault/src/instructions/rebalance.rs:107:10
+    |
+107 | #[derive(Accounts)]
+    |          ^^^^^^^^
+    |
+    = note: expected values for `feature` are: `cpi`, `default`, `no-entrypoint`, `no-idl`, and `no-log-ix-name`
+    = note: using a cfg inside a derive macro will use the cfgs from the destination crate and not the ones from the defining crate
+    = help: try referring to `Accounts` crate for guidance on how handle this unexpected cfg
+    = help: the derive macro `Accounts` may come from an old version of the `anchor_derive_accounts` crate, try updating your dependency with `cargo update -p anchor_derive_accounts`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+    = note: this warning originates in the derive macro `Accounts` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unexpected `cfg` condition value: `anchor-debug`
+   --> programs/jsol-vault/src/instructions/admin.rs:290:10
+    |
+290 | #[derive(Accounts)]
+    |          ^^^^^^^^
+    |
+    = note: expected values for `feature` are: `cpi`, `default`, `no-entrypoint`, `no-idl`, and `no-log-ix-name`
+    = note: using a cfg inside a derive macro will use the cfgs from the destination crate and not the ones from the defining crate
+    = help: try referring to `Accounts` crate for guidance on how handle this unexpected cfg
+    = help: the derive macro `Accounts` may come from an old version of the `anchor_derive_accounts` crate, try updating your dependency with `cargo update -p anchor_derive_accounts`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+    = note: this warning originates in the derive macro `Accounts` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unexpected `cfg` condition value: `anchor-debug`
+   --> programs/jsol-vault/src/instructions/admin.rs:305:10
+    |
+305 | #[derive(Accounts)]
+    |          ^^^^^^^^
+    |
+    = note: expected values for `feature` are: `cpi`, `default`, `no-entrypoint`, `no-idl`, and `no-log-ix-name`
+    = note: using a cfg inside a derive macro will use the cfgs from the destination crate and not the ones from the defining crate
+    = help: try referring to `Accounts` crate for guidance on how handle this unexpected cfg
+    = help: the derive macro `Accounts` may come from an old version of the `anchor_derive_accounts` crate, try updating your dependency with `cargo update -p anchor_derive_accounts`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+    = note: this warning originates in the derive macro `Accounts` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unexpected `cfg` condition value: `anchor-debug`
+   --> programs/jsol-vault/src/instructions/staking.rs:137:10
+    |
+137 | #[derive(Accounts)]
+    |          ^^^^^^^^
+    |
+    = note: expected values for `feature` are: `cpi`, `default`, `no-entrypoint`, `no-idl`, and `no-log-ix-name`
+    = note: using a cfg inside a derive macro will use the cfgs from the destination crate and not the ones from the defining crate
+    = help: try referring to `Accounts` crate for guidance on how handle this unexpected cfg
+    = help: the derive macro `Accounts` may come from an old version of the `anchor_derive_accounts` crate, try updating your dependency with `cargo update -p anchor_derive_accounts`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+    = note: this warning originates in the derive macro `Accounts` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unexpected `cfg` condition value: `anchor-debug`
+   --> programs/jsol-vault/src/instructions/staking.rs:167:10
+    |
+167 | #[derive(Accounts)]
+    |          ^^^^^^^^
+    |
+    = note: expected values for `feature` are: `cpi`, `default`, `no-entrypoint`, `no-idl`, and `no-log-ix-name`
+    = note: using a cfg inside a derive macro will use the cfgs from the destination crate and not the ones from the defining crate
+    = help: try referring to `Accounts` crate for guidance on how handle this unexpected cfg
+    = help: the derive macro `Accounts` may come from an old version of the `anchor_derive_accounts` crate, try updating your dependency with `cargo update -p anchor_derive_accounts`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+    = note: this warning originates in the derive macro `Accounts` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: ambiguous glob re-exports
+  --> programs/jsol-vault/src/instructions/mod.rs:10:9
+   |
+10 | pub use initialize::*;
+   |         ^^^^^^^^^^^^^ the name `handler` in the value namespace is first re-exported here
+...
+13 | pub use rebalance::*;
+   |         ------------ but the name `handler` in the value namespace is also re-exported here
+   |
+   = note: `#[warn(ambiguous_glob_reexports)]` on by default
+
+warning: unused import: `anchor_lang::prelude::*`
+ --> programs/jsol-vault/src/utils/protocols.rs:5:5
+  |
+5 | use anchor_lang::prelude::*;
+  |     ^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unexpected `cfg` condition value: `anchor-debug`
+  --> programs/jsol-vault/src/lib.rs:31:1
+   |
+31 | #[program]
+   | ^^^^^^^^^^
+   |
+   = note: expected values for `feature` are: `cpi`, `default`, `no-entrypoint`, `no-idl`, and `no-log-ix-name`
+   = note: using a cfg inside a attribute macro will use the cfgs from the destination crate and not the ones from the defining crate
+   = help: try referring to `program` crate for guidance on how handle this unexpected cfg
+   = help: the attribute macro `program` may come from an old version of the `anchor_attribute_program` crate, try updating your dependency with `cargo update -p anchor_attribute_program`
+   = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+   = note: this warning originates in the attribute macro `program` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unexpected `cfg` condition value: `anchor-debug`
+  --> programs/jsol-vault/src/lib.rs:31:1
+   |
+31 | #[program]
+   | ^^^^^^^^^^
+   |
+   = note: expected values for `feature` are: `cpi`, `default`, `no-entrypoint`, `no-idl`, and `no-log-ix-name`
+   = note: using a cfg inside a derive macro will use the cfgs from the destination crate and not the ones from the defining crate
+   = help: try referring to `Accounts` crate for guidance on how handle this unexpected cfg
+   = help: the derive macro `Accounts` may come from an old version of the `anchor_derive_accounts` crate, try updating your dependency with `cargo update -p anchor_derive_accounts`
+   = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+   = note: this warning originates in the derive macro `Accounts` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `Deposit<'_>: Bumps` is not satisfied
+   --> programs/jsol-vault/src/instructions/deposit.rs:17:21
+    |
+ 17 | ...x: Context<Deposit>, a...
+    |       ^^^^^^^^^^^^^^^^ unsatisfied trait bound
+    |
+help: the trait `Bumps` is not implemented for `Deposit<'_>`
+   --> programs/jsol-vault/src/instructions/deposit.rs:130:1
+    |
+130 | pub struct Deposit<'info> {
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^
+    = help: the following other types implement trait `Bumps`:
+              Create<'info>
+              CreateNonceAccount<'info>
+              CreateNonceAccountWithSeed<'info>
+              IdlAccounts<'info>
+              IdlCloseAccount<'info>
+              IdlCreateAccounts<'info>
+              IdlCreateBuffer<'info>
+              IdlResizeAccount<'info>
+            and 56 others
+note: required by a bound in `anchor_lang::context::Context`
+   --> /Users/cmpgfb/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/anchor-lang-0.29.0/src/context.rs:24:42
+    |
+ 24 | ...T: Bumps> {
+    |       ^^^^^ required by this bound in `Context`
+    = note: the full name for the type has been written to '/Users/cmpgfb/jSOL/jsol-vault/target/debug/deps/jsol_vault-2d25b5016896d3b0.long-type-17736862246363762699.txt'
+    = note: consider using `--verbose` to print the full type name to the console
+
+error[E0277]: the trait bound `Deposit<'_>: Bumps` is not satisfied
+   --> programs/jsol-vault/src/lib.rs:61:25
+    |
+ 61 | ...x: Context<Deposit>, a...
+    |       ^^^^^^^^^^^^^^^^ unsatisfied trait bound
+    |
+help: the trait `Bumps` is not implemented for `Deposit<'_>`
+   --> programs/jsol-vault/src/instructions/deposit.rs:130:1
+    |
+130 | pub struct Deposit<'info> {
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^
+    = help: the following other types implement trait `Bumps`:
+              Create<'info>
+              CreateNonceAccount<'info>
+              CreateNonceAccountWithSeed<'info>
+              IdlAccounts<'info>
+              IdlCloseAccount<'info>
+              IdlCreateAccounts<'info>
+              IdlCreateBuffer<'info>
+              IdlResizeAccount<'info>
+            and 56 others
+note: required by a bound in `anchor_lang::context::Context`
+   --> /Users/cmpgfb/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/anchor-lang-0.29.0/src/context.rs:24:42
+    |
+ 24 | ...T: Bumps> {
+    |       ^^^^^ required by this bound in `Context`
+    = note: the full name for the type has been written to '/Users/cmpgfb/jSOL/jsol-vault/target/debug/deps/jsol_vault-2d25b5016896d3b0.long-type-4324961484779089271.txt'
+    = note: consider using `--verbose` to print the full type name to the console
+
+error[E0107]: type alias takes 1 generic argument but 2 generic arguments were supplied
+   --> programs/jsol-vault/src/state.rs:177:34
+    |
+177 | ...-> Result<u64, anchor_lang::error::Error> {
+    |       ^^^^^^    --------------------------- help: remove the unnecessary generic argument
+    |       |
+    |       expected 1 generic argument
+    |
+note: type alias defined here, with 1 generic parameter: `T`
+   --> /Users/cmpgfb/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/anchor-lang-0.29.0/src/lib.rs:68:10
+    |
+ 68 | ...pe Result<T> = ...
+    |       ^^^^^^ -
+
+error[E0107]: type alias takes 1 generic argument but 2 generic arguments were supplied
+   --> programs/jsol-vault/src/state.rs:193:62
+    |
+193 | ...-> Result<u64, anchor_lang::error::Error> {
+    |       ^^^^^^    --------------------------- help: remove the unnecessary generic argument
+    |       |
+    |       expected 1 generic argument
+    |
+note: type alias defined here, with 1 generic parameter: `T`
+   --> /Users/cmpgfb/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/anchor-lang-0.29.0/src/lib.rs:68:10
+    |
+ 68 | ...pe Result<T> = ...
+    |       ^^^^^^ -
+
+error[E0107]: type alias takes 1 generic argument but 2 generic arguments were supplied
+   --> programs/jsol-vault/src/state.rs:215:54
+    |
+215 | ...-> Result<u64, anchor_lang::error::Error> {
+    |       ^^^^^^    --------------------------- help: remove the unnecessary generic argument
+    |       |
+    |       expected 1 generic argument
+    |
+note: type alias defined here, with 1 generic parameter: `T`
+   --> /Users/cmpgfb/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/anchor-lang-0.29.0/src/lib.rs:68:10
+    |
+ 68 | ...pe Result<T> = ...
+    |       ^^^^^^ -
+
+error[E0277]: the trait bound `Deposit<'_>: Bumps` is not satisfied in `Context<'_, '_, '_, '_, ...>`
+   --> programs/jsol-vault/src/instructions/deposit.rs:17:21
+    |
+ 17 | ...x: Context<Deposit>, a...
+    |       ^^^^^^^^^^^^^^^^ unsatisfied trait bound
+    |
+help: within `Context<'_, '_, '_, '_, ...>`, the trait `Bumps` is not implemented for `Deposit<'_>`
+   --> programs/jsol-vault/src/instructions/deposit.rs:130:1
+    |
+130 | pub struct Deposit<'info> {
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^
+    = help: the following other types implement trait `Bumps`:
+              Create<'info>
+              CreateNonceAccount<'info>
+              CreateNonceAccountWithSeed<'info>
+              IdlAccounts<'info>
+              IdlCloseAccount<'info>
+              IdlCreateAccounts<'info>
+              IdlCreateBuffer<'info>
+              IdlResizeAccount<'info>
+            and 56 others
+note: required because it appears within the type `Context<'_, '_, '_, '_, ...>`
+   --> /Users/cmpgfb/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/anchor-lang-0.29.0/src/context.rs:24:12
+    |
+ 24 | ...uct Context<'a,...
+    |        ^^^^^^^
+    = help: unsized fn params are gated as an unstable feature
+    = note: the full name for the type has been written to '/Users/cmpgfb/jSOL/jsol-vault/target/debug/deps/jsol_vault-2d25b5016896d3b0.long-type-4546554411176371818.txt'
+    = note: consider using `--verbose` to print the full type name to the console
+help: function arguments must have a statically known size, borrowed types always have a known size
+    |
+ 17 | pub fn handler(ctx: &Context<Deposit>, amount: u64) -> Result<()> {
+    |                     +
+
+error[E0277]: the trait bound `Deposit<'_>: Bumps` is not satisfied
+   --> programs/jsol-vault/src/instructions/deposit.rs:96:29
+    |
+ 96 | ... = ctx.bumps.us...
+    |       ^^^^^^^^^ unsatisfied trait bound
+    |
+help: the trait `Bumps` is not implemented for `Deposit<'_>`
+   --> programs/jsol-vault/src/instructions/deposit.rs:130:1
+    |
+130 | pub struct Deposit<'info> {
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^
+    = help: the following other types implement trait `Bumps`:
+              Create<'info>
+              CreateNonceAccount<'info>
+              CreateNonceAccountWithSeed<'info>
+              IdlAccounts<'info>
+              IdlCloseAccount<'info>
+              IdlCreateAccounts<'info>
+              IdlCreateBuffer<'info>
+              IdlResizeAccount<'info>
+            and 56 others
+    = note: the full name for the type has been written to '/Users/cmpgfb/jSOL/jsol-vault/target/debug/deps/jsol_vault-2d25b5016896d3b0.long-type-17736862246363762699.txt'
+    = note: consider using `--verbose` to print the full type name to the console
+
+error[E0277]: the trait bound `Deposit<'_>: Bumps` is not satisfied
+   --> programs/jsol-vault/src/lib.rs:61:33
+    |
+ 61 | ...xt<Deposit>, am...
+    |       ^^^^^^^ unsatisfied trait bound
+    |
+help: the trait `Bumps` is not implemented for `Deposit<'_>`
+   --> programs/jsol-vault/src/instructions/deposit.rs:130:1
+    |
+130 | pub struct Deposit<'info> {
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^
+    = help: the following other types implement trait `Bumps`:
+              Create<'info>
+              CreateNonceAccount<'info>
+              CreateNonceAccountWithSeed<'info>
+              IdlAccounts<'info>
+              IdlCloseAccount<'info>
+              IdlCreateAccounts<'info>
+              IdlCreateBuffer<'info>
+              IdlResizeAccount<'info>
+            and 56 others
+    = note: the full name for the type has been written to '/Users/cmpgfb/jSOL/jsol-vault/target/debug/deps/jsol_vault-2d25b5016896d3b0.long-type-13331060403903223029.txt'
+    = note: consider using `--verbose` to print the full type name to the console
+
+error[E0277]: the trait bound `Deposit<'_>: Bumps` is not satisfied
+   --> programs/jsol-vault/src/lib.rs:31:1
+    |
+ 31 | #[program]
+    | ^^^^^^^^^^ unsatisfied trait bound
+    |
+help: the trait `Bumps` is not implemented for `Deposit<'_>`
+   --> programs/jsol-vault/src/instructions/deposit.rs:130:1
+    |
+130 | pub struct Deposit<'info> {
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^
+    = help: the following other types implement trait `Bumps`:
+              Create<'info>
+              CreateNonceAccount<'info>
+              CreateNonceAccountWithSeed<'info>
+              IdlAccounts<'info>
+              IdlCloseAccount<'info>
+              IdlCreateAccounts<'info>
+              IdlCreateBuffer<'info>
+              IdlResizeAccount<'info>
+            and 56 others
+    = note: the full name for the type has been written to '/Users/cmpgfb/jSOL/jsol-vault/target/debug/deps/jsol_vault-2d25b5016896d3b0.long-type-13331060403903223029.txt'
+    = note: consider using `--verbose` to print the full type name to the console
+    = note: this error originates in the attribute macro `program` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0599]: no function or associated item named `try_accounts` found for struct `Deposit<'info>` in the current scope
+   --> programs/jsol-vault/src/lib.rs:31:1
+    |
+ 31 | #[program]
+    | ^^^^^^^^^^ function or associated item not found in `Deposit<'_>`
+    |
+   ::: programs/jsol-vault/src/instructions/deposit.rs:130:1
+    |
+130 | pub struct Deposit<'info> {
+    | ------------------------- function or associated item `try_accounts` not found for this struct
+    |
+    = help: items from traits can only be used if the trait is implemented and in scope
+    = note: the following trait defines an item `try_accounts`, perhaps you need to implement it:
+            candidate #1: `anchor_lang::Accounts`
+    = note: the full name for the type has been written to '/Users/cmpgfb/jSOL/jsol-vault/target/debug/deps/jsol_vault-2d25b5016896d3b0.long-type-8377860169712397901.txt'
+    = note: consider using `--verbose` to print the full type name to the console
+    = note: this error originates in the attribute macro `program` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `Deposit<'_>: Accounts<'_, _>` is not satisfied
+   --> programs/jsol-vault/src/lib.rs:31:1
+    |
+ 31 | #[program]
+    | ^^^^^^^^^^ unsatisfied trait bound
+    |
+help: the trait `anchor_lang::Accounts<'_, _>` is not implemented for `Deposit<'_>`
+   --> programs/jsol-vault/src/instructions/deposit.rs:130:1
+    |
+130 | pub struct Deposit<'info> {
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^
+    = help: the following other types implement trait `anchor_lang::Accounts<'info, B>`:
+              `AccountLoader<'info, ...>` implements `Accounts<'info, B>`
+              `Box<T>` implements `Accounts<'info, B>`
+              `Create<'info>` implements `Accounts<'info, CreateBumps>`
+              `CreateNonceAccount<'info>` implements `Accounts<'info, CreateNonceAccountBumps>`
+              `CreateNonceAccountWithSeed<'info>` implements `Accounts<'info, CreateNonceAccountWithSeedBumps>`
+              `Interface<'info, ...>` implements `Accounts<'info, B>`
+              `InterfaceAccount<'info, ...>` implements `Accounts<'info, B>`
+              `Option<T>` implements `Accounts<'info, B>`
+            and 69 others
+note: required by a bound in `anchor_lang::context::Context::<'a, 'b, 'c, 'info, T>::new`
+   --> /Users/cmpgfb/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/anchor-lang-0.29.0/src/context.rs:55:16
+    |
+ 55 | ...umps + Accounts<'info, T::Bumps>,
+    |           ^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `Context::<'a, 'b, 'c, 'info, T>::new`
+ 56 | ...
+ 57 | ...fn new(
+    |       --- required by a bound in this associated function
+    = note: the full name for the type has been written to '/Users/cmpgfb/jSOL/jsol-vault/target/debug/deps/jsol_vault-2d25b5016896d3b0.long-type-3940394406954653698.txt'
+    = note: consider using `--verbose` to print the full type name to the console
+    = note: this error originates in the attribute macro `program` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `Deposit<'_>: Bumps` is not satisfied in `Context<'_, '_, '_, '_, ...>`
+   --> programs/jsol-vault/src/lib.rs:61:25
+    |
+ 61 | ...x: Context<Deposit>, a...
+    |       ^^^^^^^^^^^^^^^^ unsatisfied trait bound
+    |
+help: within `Context<'_, '_, '_, '_, ...>`, the trait `Bumps` is not implemented for `Deposit<'_>`
+   --> programs/jsol-vault/src/instructions/deposit.rs:130:1
+    |
+130 | pub struct Deposit<'info> {
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^
+    = help: the following other types implement trait `Bumps`:
+              Create<'info>
+              CreateNonceAccount<'info>
+              CreateNonceAccountWithSeed<'info>
+              IdlAccounts<'info>
+              IdlCloseAccount<'info>
+              IdlCreateAccounts<'info>
+              IdlCreateBuffer<'info>
+              IdlResizeAccount<'info>
+            and 56 others
+note: required because it appears within the type `Context<'_, '_, '_, '_, ...>`
+   --> /Users/cmpgfb/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/anchor-lang-0.29.0/src/context.rs:24:12
+    |
+ 24 | ...uct Context<'a,...
+    |        ^^^^^^^
+    = help: unsized fn params are gated as an unstable feature
+    = note: the full name for the type has been written to '/Users/cmpgfb/jSOL/jsol-vault/target/debug/deps/jsol_vault-2d25b5016896d3b0.long-type-12406679594790312247.txt'
+    = note: consider using `--verbose` to print the full type name to the console
+help: function arguments must have a statically known size, borrowed types always have a known size
+    |
+ 61 |     pub fn deposit(ctx: &Context<Deposit>, amount: u64) -> Result<()> {
+    |                         +
+
+error[E0277]: the trait bound `Deposit<'_>: Bumps` is not satisfied
+   --> programs/jsol-vault/src/lib.rs:62:26
+    |
+ 62 | ...dler(ctx, amount)
+    |         ^^^ unsatisfied trait bound
+    |
+help: the trait `Bumps` is not implemented for `Deposit<'_>`
+   --> programs/jsol-vault/src/instructions/deposit.rs:130:1
+    |
+130 | pub struct Deposit<'info> {
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^
+    = help: the following other types implement trait `Bumps`:
+              Create<'info>
+              CreateNonceAccount<'info>
+              CreateNonceAccountWithSeed<'info>
+              IdlAccounts<'info>
+              IdlCloseAccount<'info>
+              IdlCreateAccounts<'info>
+              IdlCreateBuffer<'info>
+              IdlResizeAccount<'info>
+            and 56 others
+note: required by a bound in `anchor_lang::context::Context`
+   --> /Users/cmpgfb/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/anchor-lang-0.29.0/src/context.rs:24:42
+    |
+ 24 | ...T: Bumps> {
+    |       ^^^^^ required by this bound in `Context`
+    = note: the full name for the type has been written to '/Users/cmpgfb/jSOL/jsol-vault/target/debug/deps/jsol_vault-2d25b5016896d3b0.long-type-13331060403903223029.txt'
+    = note: consider using `--verbose` to print the full type name to the console
+
+Some errors have detailed explanations: E0107, E0277, E0432, E0599.
+For more information about an error, try `rustc --explain E0107`.
+warning: `jsol-vault` (lib) generated 22 warnings (5 duplicates)
+error: could not compile `jsol-vault` (lib) due to 16 previous errors; 22 warnings emitted

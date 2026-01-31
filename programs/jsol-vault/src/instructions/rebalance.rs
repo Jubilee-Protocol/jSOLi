@@ -67,12 +67,13 @@ pub fn handler(ctx: Context<Rebalance>) -> Result<()> {
     
     // For now, we update current allocations to target (placeholder)
     let mut new_allocations = [0u16; MAX_PROTOCOLS];
+    let total_tvl = vault.total_tvl; // Use local copy to avoid borrow conflict
     
     for i in 0..vault.num_allocations as usize {
         let alloc = &mut vault.allocations[i];
         
         // Calculate new amount based on target allocation
-        let new_amount = (vault.total_tvl as u128)
+        let new_amount = (total_tvl as u128)
             .checked_mul(alloc.target_bps as u128)
             .ok_or(VaultError::MathOverflow)?
             .checked_div(TOTAL_ALLOCATION_BPS as u128)

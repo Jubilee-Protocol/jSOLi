@@ -83,7 +83,7 @@ pub fn validate_deposit_cap(current_tvl: u64, deposit: u64, cap: u64) -> Result<
 
 /// Validate that a protocol ID is valid
 pub fn validate_protocol_id(protocol: u8) -> Result<()> {
-    // Protocol IDs 0-5 are valid (Jito, Marinade, BlazeStake, Lido, Native, Jupiter)
-    require!(protocol <= 5, VaultError::UnsupportedProtocol);
+    // Protocol IDs 0-3 are valid (Jito, Marinade, BlazeStake, Jupiter)
+    require!(protocol <= 3, VaultError::UnsupportedProtocol);
     Ok(())
 }

@@ -18,10 +18,6 @@ pub enum LstProtocol {
     Marinade,
     /// BlazeStake SOL (bSOL)
     BlazeStake,
-    /// Lido staked SOL (stSOL)
-    Lido,
-    /// Native Solana staking
-    Native,
     /// Jupiter staked SOL (JupSOL)
     Jupiter,
 }
@@ -177,8 +173,8 @@ impl VaultState {
         128;                   // reserved
     
     /// Calculate the current share price (value per share in lamports)
-    /// Returns error on overflow instead of masking with unwrap_or
-    pub fn share_price(&self) -> Result<u64, anchor_lang::error::Error> {
+    /// Returns error on overflow
+    pub fn share_price(&self) -> Result<u64> {
         use crate::errors::VaultError;
         if self.total_shares == 0 {
             Ok(SHARE_PRECISION)
@@ -192,9 +188,9 @@ impl VaultState {
         }
     }
     
-    /// Calculate shares for a given deposit amount
+    /// Calculate shares to mint for a given deposit amount
     /// Implements first-depositor protection by requiring minimum shares
-    pub fn calculate_shares(&self, deposit_lamports: u64) -> Result<u64, anchor_lang::error::Error> {
+    pub fn calculate_shares_to_mint(&self, deposit_lamports: u64) -> Result<u64> {
         use crate::errors::VaultError;
         use crate::constants::MINIMUM_INITIAL_SHARES;
         
@@ -216,7 +212,7 @@ impl VaultState {
     }
     
     /// Calculate lamports value for a given share amount
-    pub fn calculate_lamports(&self, shares: u64) -> Result<u64, anchor_lang::error::Error> {
+    pub fn calculate_lamports(&self, shares: u64) -> Result<u64> {
         use crate::errors::VaultError;
         if self.total_shares == 0 {
             Ok(0)

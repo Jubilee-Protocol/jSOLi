@@ -11,9 +11,7 @@ pub fn get_protocol_mint(protocol: LstProtocol) -> Option<&'static str> {
         LstProtocol::Jito => Some("J1toso1uCk3RLmjorhTtrVwY9HJ7X8V9yYac6Y7kGCPn"),
         LstProtocol::Marinade => Some("mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So"),
         LstProtocol::BlazeStake => Some("bSo13r4TkiE4KumL71LsHTPpL2euBYLFx6h9HP3piy1"),
-        LstProtocol::Lido => Some("7dHbWXmci3dT8UFYWYZweBLXgycu7Y3iL6trKn1Y7ARj"),
         LstProtocol::Jupiter => Some("jupSoLaHXQiZZTSfEWMTRRgpnyFm8f6sZdosWBjx93v"),
-        LstProtocol::Native => None, // Native staking doesn't have a token mint
     }
 }
 
@@ -23,9 +21,7 @@ pub fn get_protocol_program_id(protocol: LstProtocol) -> Option<&'static str> {
         LstProtocol::Marinade => Some("MarBmsSgKXdrN1egZf5sqe1TMai9K1rChYNDJgjq7aD"),
         LstProtocol::Jito => Some("Jito4APyf642JPZPx3hGc6WWJ8zPKtRbRs4P815Awbb"),
         LstProtocol::BlazeStake => Some("stk9ApL5HeVAwPLr3TLhDXdZS8ptVu7zp6ov8HFDuMi"),
-        LstProtocol::Lido => Some("CrX7kMhLC3cSsXJdT7JDgqrRVWGnUpX3gfEfxxU2NVLi"),
         LstProtocol::Jupiter => Some("jupSoLaHXQiZZTSfEWMTRRgpnyFm8f6sZdosWBjx93v"),
-        LstProtocol::Native => None, // Uses Solana's stake program
     }
 }
 
@@ -35,8 +31,6 @@ pub fn get_protocol_name(protocol: LstProtocol) -> &'static str {
         LstProtocol::Jito => "Jito",
         LstProtocol::Marinade => "Marinade",
         LstProtocol::BlazeStake => "BlazeStake",
-        LstProtocol::Lido => "Lido",
-        LstProtocol::Native => "Native",
         LstProtocol::Jupiter => "Jupiter",
     }
 }
@@ -47,8 +41,6 @@ pub fn get_protocol_symbol(protocol: LstProtocol) -> &'static str {
         LstProtocol::Jito => "jitoSOL",
         LstProtocol::Marinade => "mSOL",
         LstProtocol::BlazeStake => "bSOL",
-        LstProtocol::Lido => "stSOL",
-        LstProtocol::Native => "SOL",
         LstProtocol::Jupiter => "JupSOL",
     }
 }
@@ -59,8 +51,6 @@ pub fn get_unstaking_delay(protocol: LstProtocol) -> i64 {
         LstProtocol::Jito => 0,           // Instant unstaking available
         LstProtocol::Marinade => 0,       // mSOL has instant redemption (with fee) or delayed
         LstProtocol::BlazeStake => 172800,// ~2 days
-        LstProtocol::Lido => 259200,      // ~3 days
-        LstProtocol::Native => 172800,    // ~2 epochs
         LstProtocol::Jupiter => 86400,    // ~1 day
     }
 }
@@ -85,9 +75,7 @@ pub fn protocol_to_index(protocol: LstProtocol) -> u8 {
         LstProtocol::Jito => 0,
         LstProtocol::Marinade => 1,
         LstProtocol::BlazeStake => 2,
-        LstProtocol::Lido => 3,
-        LstProtocol::Native => 4,
-        LstProtocol::Jupiter => 5,
+        LstProtocol::Jupiter => 3,
     }
 }
 
@@ -97,9 +85,7 @@ pub fn index_to_protocol(index: u8) -> Option<LstProtocol> {
         0 => Some(LstProtocol::Jito),
         1 => Some(LstProtocol::Marinade),
         2 => Some(LstProtocol::BlazeStake),
-        3 => Some(LstProtocol::Lido),
-        4 => Some(LstProtocol::Native),
-        5 => Some(LstProtocol::Jupiter),
+        3 => Some(LstProtocol::Jupiter),
         _ => None,
     }
 }

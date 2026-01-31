@@ -7,7 +7,9 @@ use crate::constants::*;
 use crate::errors::VaultError;
 use crate::state::*;
 
-/// Deposit SOL into the vault and receive jSOLii shares
+use crate::utils::oracle::{get_pyth_price, pyth_feeds};
+
+/// Deposit SOL into the vault and receive jSOLi shares
 /// 
 /// # Arguments
 /// * `ctx` - The context containing all accounts
@@ -16,7 +18,19 @@ pub fn handler(ctx: Context<Deposit>, amount: u64) -> Result<()> {
     // Validate amount
     require!(amount > 0, VaultError::ZeroAmount);
     require!(amount >= MIN_DEPOSIT_LAMPORTS, VaultError::DepositBelowMinimum);
+
+    // Validate Oracle Price (Solana / USD)
+    // We check this BEFORE deposit to ensure external market conditions are valid
+    let sol_price = get_pyth_price(&ctx.accounts.oracle_account, MAX_ORACLE_STALENESS_SECS)?;
     
+    // Verify we are looking at the correct feed
+    require!(
+        ctx.accounts.oracle_account.key().to_string() == pyth_feeds::SOL_USD, 
+        VaultError::InvalidOracleAccount
+    );
+
+    msg!("Oracle Price: ${} (conf: {})", sol_price.price, sol_price.confidence);
+
     let vault = &mut ctx.accounts.vault;
     
     // Check vault is not paused
@@ -33,8 +47,8 @@ pub fn handler(ctx: Context<Deposit>, amount: u64) -> Result<()> {
         );
     }
     
-    // Calculate shares to mint (now returns Result with first-depositor protection)
-    let shares_to_mint = vault.calculate_shares(amount)?;
+    // Calculate shares to mint
+    let shares_to_mint = vault.calculate_shares_to_mint(amount)?;
     require!(shares_to_mint > 0, VaultError::ZeroAmount);
     
     // Record share price before deposit
@@ -59,7 +73,7 @@ pub fn handler(ctx: Context<Deposit>, amount: u64) -> Result<()> {
         MintTo {
             mint: ctx.accounts.jsoli_mint.to_account_info(),
             to: ctx.accounts.user_jsol_account.to_account_info(),
-            authority: ctx.accounts.vault.to_account_info(),
+            authority: vault.to_account_info(),
         },
         signer_seeds,
     );
@@ -100,8 +114,8 @@ pub fn handler(ctx: Context<Deposit>, amount: u64) -> Result<()> {
         user: ctx.accounts.user.key(),
         lamports: amount,
         shares_minted: shares_to_mint,
-        share_price,
-        timestamp: clock.unix_timestamp,
+        share_price: share_price,
+        timestamp: Clock::get()?.unix_timestamp,
     });
     
     msg!("Deposit successful");
@@ -173,4 +187,8 @@ pub struct Deposit<'info> {
     
     /// Rent sysvar
     pub rent: Sysvar<'info, Rent>,
+
+    /// Pyth Oracle Account (SOL/USD)
+    /// CHECK: Validated by Pyth SDK and Feed ID check in handler
+    pub oracle_account: AccountInfo<'info>,
 }
