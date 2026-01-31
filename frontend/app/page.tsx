@@ -194,20 +194,28 @@ export default function Home() {
     return (
         <main style={getGradientStyle(theme)} className="flex flex-col">
             {/* Header */}
-            <header className="flex flex-wrap items-center justify-between px-4 py-4 md:px-6 md:py-5 gap-3">
-                <div className="flex items-center gap-3">
+            <header style={{ padding: '20px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                     <Image src="/jubilee-logo-pink.png" alt="Jubilee" width={32} height={32} />
-                    <span className="text-xl md:text-2xl font-bold text-[var(--text-dark)] dark:text-gray-200" style={{ color: c.text }}>jSOLi</span>
+                    <span style={{ fontSize: '22px', fontWeight: 'bold', color: c.text }}>jSOLi</span>
                 </div>
-                <div className="flex items-center gap-2 md:gap-3 flex-wrap justify-end">
+                <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
                     {mounted && (
                         <>
                             {/* Theme Toggle */}
                             <button
                                 onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')}
-                                className="flex items-center justify-center w-9 h-9 md:w-11 md:h-11 rounded-full text-base md:text-xl transition-colors hover:bg-black/10 dark:hover:bg-white/10"
                                 style={{
                                     background: theme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)',
+                                    border: 'none',
+                                    cursor: 'pointer',
+                                    fontSize: '20px',
+                                    width: '44px',
+                                    height: '44px',
+                                    borderRadius: '50%',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
                                 }}
                                 suppressHydrationWarning
                             >
@@ -216,88 +224,127 @@ export default function Home() {
                             {/* Treasury Button */}
                             <button
                                 onClick={() => setShowTreasury(true)}
-                                className="flex items-center justify-center w-9 h-9 md:w-11 md:h-11 rounded-full text-base md:text-xl transition-colors hover:bg-black/10 dark:hover:bg-white/10"
                                 style={{
                                     background: theme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)',
+                                    border: 'none',
+                                    cursor: 'pointer',
+                                    fontSize: '20px',
+                                    width: '44px',
+                                    height: '44px',
+                                    borderRadius: '50%',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
                                 }}
                                 title="Treasury Mode"
                             >
                                 🏛️
                             </button>
-                            <div className="scale-90 md:scale-100 origin-right">
-                                <WalletMultiButton />
-                            </div>
+                            <WalletMultiButton />
                         </>
                     )}
                 </div>
             </header>
 
             {/* Devnet Warning Banner */}
-            <div className="bg-gradient-to-r from-[#FF6B35] to-[#F7931A] px-4 py-3 text-center flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-4">
-                <span className="text-white font-semibold text-xs md:text-sm">
+            <div style={{
+                background: 'linear-gradient(90deg, #FF6B35, #F7931A)',
+                padding: '12px 24px',
+                textAlign: 'center',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '16px',
+                flexWrap: 'wrap',
+            }}>
+                <span style={{
+                    color: 'white',
+                    fontWeight: '600',
+                    fontSize: '14px',
+                }}>
                     ⚠️ DEVNET — This is a test environment. Tokens have no real value.
                 </span>
                 <a
                     href="https://faucet.solana.com/"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="bg-white/20 hover:bg-white/30 text-white px-4 py-1.5 rounded-full text-xs md:text-[13px] font-semibold no-underline border border-white/30 transition-all"
+                    style={{
+                        background: 'rgba(255,255,255,0.2)',
+                        color: 'white',
+                        padding: '6px 16px',
+                        borderRadius: '20px',
+                        fontSize: '13px',
+                        fontWeight: '600',
+                        textDecoration: 'none',
+                        border: '1px solid rgba(255,255,255,0.3)',
+                        transition: 'all 0.2s ease',
+                    }}
+                    onMouseOver={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.3)'}
+                    onMouseOut={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.2)'}
                 >
                     💧 Get Devnet SOL
                 </a>
             </div>
 
             {/* Stats Bar */}
-            <div
-                className="flex flex-wrap justify-center gap-4 md:gap-12 px-4 py-4 md:px-6 border-b"
-                style={{
-                    background: c.accentLight,
-                    borderBottomColor: c.cardBorder
-                }}
-            >
-                <div className="text-center min-w-[80px]">
-                    <div className="text-xs font-semibold uppercase mb-1" style={{ color: c.textMuted }}>TVL</div>
-                    <div className="text-base md:text-lg font-bold" style={{ color: c.text }}>{tvl.toLocaleString()} SOL</div>
+            <div style={{
+                display: 'flex',
+                justifyContent: 'center',
+                gap: '48px',
+                padding: '16px 24px',
+                background: c.accentLight,
+                borderBottom: `1px solid ${c.cardBorder}`
+            }}>
+                <div style={{ textAlign: 'center' }}>
+                    <div style={{ color: c.textMuted, fontSize: '12px', fontWeight: '600', textTransform: 'uppercase' }}>TVL</div>
+                    <div style={{ color: c.text, fontSize: '18px', fontWeight: '700' }}>{tvl.toLocaleString()} SOL</div>
                 </div>
-                <div className="text-center min-w-[80px]">
-                    <div className="text-xs font-semibold uppercase mb-1" style={{ color: c.textMuted }}>Est. APY</div>
-                    <div className="text-[#14F195] text-base md:text-lg font-bold">{apy.toFixed(1)}%</div>
+                <div style={{ textAlign: 'center' }}>
+                    <div style={{ color: c.textMuted, fontSize: '12px', fontWeight: '600', textTransform: 'uppercase' }}>Est. APY</div>
+                    <div style={{ color: '#14F195', fontSize: '18px', fontWeight: '700' }}>{apy.toFixed(1)}%</div>
                 </div>
-                <div className="text-center min-w-[80px]">
-                    <div className="text-xs font-semibold uppercase mb-1" style={{ color: c.textMuted }}>Your jSOLi</div>
-                    <div className="text-base md:text-lg font-bold" style={{ color: c.text }}>{jsoliBalance.toFixed(4)}</div>
+                <div style={{ textAlign: 'center' }}>
+                    <div style={{ color: c.textMuted, fontSize: '12px', fontWeight: '600', textTransform: 'uppercase' }}>Your jSOLi</div>
+                    <div style={{ color: c.text, fontSize: '18px', fontWeight: '700' }}>{jsoliBalance.toFixed(4)}</div>
                 </div>
             </div>
 
             {/* Main Content */}
-            <div className="flex-1 flex flex-col items-center justify-center p-4 md:p-10 w-full">
-                <div
-                    className="w-full max-w-[480px] rounded-3xl p-5 md:p-8 shadow-xl border"
-                    style={{
-                        background: c.card,
-                        boxShadow: '0 20px 60px -10px rgba(153, 69, 255, 0.15)',
-                        borderColor: c.cardBorder
-                    }}
-                >
-                    <h1 className="text-xl md:text-2xl font-semibold mb-2 text-center" style={{ color: c.text }}>
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 20px' }}>
+                <div style={{
+                    background: c.card,
+                    borderRadius: '24px',
+                    padding: '32px',
+                    width: '100%',
+                    maxWidth: '480px',
+                    boxShadow: '0 20px 60px -10px rgba(153, 69, 255, 0.15)',
+                    border: `1px solid ${c.cardBorder}`
+                }}>
+                    <h1 style={{ fontSize: '24px', fontWeight: '600', color: c.text, marginBottom: '8px', textAlign: 'center' }}>
                         Solana Staking Index
                     </h1>
-                    <p className="text-sm text-center mb-6" style={{ color: c.textMuted }}>
+                    <p style={{ color: c.textMuted, fontSize: '14px', textAlign: 'center', marginBottom: '24px' }}>
                         Diversified yield across top LST protocols
                     </p>
 
                     {/* Tabs & History */}
-                    <div className="flex justify-between items-center mb-6">
-                        <div className="flex rounded-xl p-1 gap-1" style={{ background: c.inputBg }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+                        <div style={{ display: 'flex', background: c.inputBg, borderRadius: '12px', padding: '4px', gap: '4px' }}>
                             {['deposit', 'withdraw'].map((tab) => (
                                 <button
                                     key={tab}
                                     onClick={() => setActiveTab(tab as any)}
-                                    className={`px-4 py-2.5 md:px-5 rounded-lg border-none font-semibold cursor-pointer text-sm md:text-base transition-all ${activeTab === tab ? 'shadow-sm' : ''}`}
                                     style={{
+                                        padding: '10px 20px',
+                                        borderRadius: '10px',
+                                        border: 'none',
                                         background: activeTab === tab ? c.card : 'transparent',
                                         color: activeTab === tab ? c.accent : c.textMuted,
+                                        fontWeight: '600',
+                                        cursor: 'pointer',
                                         boxShadow: activeTab === tab ? '0 4px 12px rgba(153, 69, 255, 0.1)' : 'none',
+                                        transition: 'all 0.2s ease',
+                                        fontSize: '16px'
                                     }}
                                 >
                                     {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -310,10 +357,19 @@ export default function Home() {
                                 refetchHistory();
                                 setShowFASB(true);
                             }}
-                            className="bg-transparent border rounded-lg px-3 py-2 md:px-4 text-sm font-semibold cursor-pointer flex items-center gap-1.5 transition-all"
                             style={{
-                                borderColor: c.accent,
+                                background: 'transparent',
+                                border: `1px solid ${c.accent}`,
+                                borderRadius: '10px',
+                                padding: '8px 16px',
                                 color: c.accent,
+                                fontWeight: '600',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '6px',
+                                fontSize: '14px',
+                                transition: 'all 0.2s ease'
                             }}
                             onMouseOver={(e) => e.currentTarget.style.background = 'rgba(153, 69, 255, 0.1)'}
                             onMouseOut={(e) => e.currentTarget.style.background = 'transparent'}
@@ -323,46 +379,66 @@ export default function Home() {
                     </div>
 
                     {/* Input */}
-                    <div className="mb-6">
-                        <div className="flex justify-between mb-2 text-sm" style={{ color: c.textMuted }}>
+                    <div style={{ marginBottom: '24px' }}>
+                        <div style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            marginBottom: '8px',
+                            color: c.textMuted,
+                            fontSize: '14px'
+                        }}>
                             <span>{activeTab === 'deposit' ? 'Deposit Amount' : 'Withdraw Amount'}</span>
                             <span>Balance: {activeTab === 'deposit' ? balance.toFixed(4) : jsoliBalance.toFixed(4)} {activeTab === 'deposit' ? 'SOL' : 'jSOLi'}</span>
                         </div>
-                        <div
-                            className="rounded-2xl p-4 border flex items-center gap-3"
-                            style={{
-                                background: c.inputBg,
-                                borderColor: c.cardBorder,
-                            }}
-                        >
+                        <div style={{
+                            background: c.inputBg,
+                            borderRadius: '16px',
+                            padding: '16px',
+                            border: `1px solid ${c.cardBorder}`,
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '12px'
+                        }}>
                             <input
                                 type="number"
                                 value={depositAmount}
                                 onChange={(e) => setDepositAmount(e.target.value)}
                                 placeholder="0.00"
-                                className="bg-transparent border-none text-xl md:text-2xl font-semibold w-full outline-none"
                                 style={{
+                                    background: 'transparent',
+                                    border: 'none',
+                                    fontSize: '24px',
+                                    fontWeight: '600',
                                     color: c.text,
+                                    width: '100%',
+                                    outline: 'none'
                                 }}
                             />
-                            <div className="flex items-center gap-2">
-                                <div
-                                    className="rounded-lg px-2 py-1 font-semibold text-sm cursor-pointer"
-                                    style={{
-                                        background: c.accentLight,
-                                        color: c.accent,
-                                    }}
-                                    onClick={() => setDepositAmount(activeTab === 'deposit' ? balance.toString() : jsoliBalance.toString())}
-                                >
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <div style={{
+                                    background: c.accentLight,
+                                    borderRadius: '8px',
+                                    padding: '4px 8px',
+                                    color: c.accent,
+                                    fontWeight: '600',
+                                    fontSize: '14px',
+                                    cursor: 'pointer'
+                                }} onClick={() => setDepositAmount(activeTab === 'deposit' ? balance.toString() : jsoliBalance.toString())}>
                                     MAX
                                 </div>
-                                <span className="font-semibold" style={{ color: c.text }}>{activeTab === 'deposit' ? 'SOL' : 'jSOLi'}</span>
+                                <span style={{ fontWeight: '600', color: c.text }}>{activeTab === 'deposit' ? 'SOL' : 'jSOLi'}</span>
                             </div>
                         </div>
 
                         {/* Min deposit info + Get SOL (only for deposit tab) */}
                         {activeTab === 'deposit' && (
-                            <div className="flex justify-between items-center mt-3 text-[13px]">
+                            <div style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                marginTop: '12px',
+                                fontSize: '13px',
+                            }}>
                                 <span style={{ color: c.textMuted }}>
                                     Min. deposit: {minDepositSOL} SOL ≈ {minDepositUSD}
                                 </span>
@@ -370,9 +446,10 @@ export default function Home() {
                                     href="https://www.coinbase.com/price/solana"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="font-medium hover:underline"
                                     style={{
                                         color: c.accent,
+                                        textDecoration: 'none',
+                                        fontWeight: '500',
                                     }}
                                 >
                                     Get SOL →
@@ -382,21 +459,28 @@ export default function Home() {
 
                         {/* Price attribution */}
                         {activeTab === 'deposit' && solPrice > 0 && (
-                            <div className="text-center mt-2 text-[11px]" style={{ color: c.textLight }}>
-                                Price by <a href="https://www.coingecko.com/en/coins/solana" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: c.textLight }}>CoinGecko</a>
+                            <div style={{
+                                textAlign: 'center',
+                                marginTop: '8px',
+                                fontSize: '11px',
+                                color: c.textLight,
+                            }}>
+                                Price by <a href="https://www.coingecko.com/en/coins/solana" target="_blank" rel="noopener noreferrer" style={{ color: c.textLight, textDecoration: 'underline' }}>CoinGecko</a>
                             </div>
                         )}
                     </div>
 
                     {/* Status Message */}
                     {txStatus !== 'idle' && (
-                        <div
-                            className="px-4 py-3 rounded-xl mb-4 text-center text-sm break-words"
-                            style={{
-                                background: txStatus === 'success' ? 'rgba(20, 241, 149, 0.1)' : txStatus === 'error' ? 'rgba(255, 100, 100, 0.1)' : c.accentLight,
-                                color: txStatus === 'success' ? '#14F195' : txStatus === 'error' ? '#FF6464' : c.accent,
-                            }}
-                        >
+                        <div style={{
+                            padding: '12px 16px',
+                            borderRadius: '12px',
+                            marginBottom: '16px',
+                            background: txStatus === 'success' ? 'rgba(20, 241, 149, 0.1)' : txStatus === 'error' ? 'rgba(255, 100, 100, 0.1)' : c.accentLight,
+                            color: txStatus === 'success' ? '#14F195' : txStatus === 'error' ? '#FF6464' : c.accent,
+                            fontSize: '14px',
+                            textAlign: 'center'
+                        }}>
                             {txMessage}
                         </div>
                     )}
@@ -405,10 +489,18 @@ export default function Home() {
                     <button
                         onClick={activeTab === 'deposit' ? handleDeposit : handleWithdraw}
                         disabled={!publicKey || !depositAmount || loading}
-                        className="w-full p-5 rounded-2xl border-none text-lg font-bold cursor-pointer transition-all disabled:cursor-not-allowed disabled:opacity-70"
                         style={{
+                            width: '100%',
+                            padding: '20px',
+                            borderRadius: '16px',
+                            border: 'none',
                             background: publicKey ? `linear-gradient(135deg, ${c.accent} 0%, #14F195 100%)` : '#E5E7EB',
                             color: publicKey ? 'white' : '#9CA3AF',
+                            fontSize: '18px',
+                            fontWeight: '700',
+                            cursor: publicKey && !loading ? 'pointer' : 'not-allowed',
+                            transition: 'all 0.2s ease',
+                            opacity: loading ? 0.7 : 1
                         }}
                     >
                         {loading ? 'Processing...' : (publicKey
@@ -417,32 +509,36 @@ export default function Home() {
                     </button>
 
                     {!connected && mounted && (
-                        <div className="mt-4 text-center">
+                        <div style={{ marginTop: '16px', textAlign: 'center' }}>
                             <WalletMultiButton style={{ width: '100%', justifyContent: 'center' }} />
                         </div>
                     )}
                 </div>
 
                 {/* Allocation Display */}
-                <div
-                    className="mt-6 rounded-2xl p-5 w-full max-w-[480px] border"
-                    style={{
-                        background: c.card,
-                        borderColor: c.cardBorder
-                    }}
-                >
-                    <h3 className="text-sm font-semibold mb-4" style={{ color: c.text }}>
+                <div style={{
+                    marginTop: '24px',
+                    background: c.card,
+                    borderRadius: '16px',
+                    padding: '20px',
+                    width: '100%',
+                    maxWidth: '480px',
+                    border: `1px solid ${c.cardBorder}`
+                }}>
+                    <h3 style={{ color: c.text, fontSize: '14px', fontWeight: '600', marginBottom: '16px' }}>
                         Protocol Allocations
                     </h3>
-                    <div className="flex flex-col gap-2">
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                         {ALLOCATIONS.map((a) => (
-                            <div key={a.protocol} className="flex items-center gap-3">
-                                <div
-                                    className="w-2 h-2 rounded-full"
-                                    style={{ background: a.color }}
-                                />
-                                <span className="text-sm flex-1" style={{ color: c.text }}>{a.protocol}</span>
-                                <span className="text-sm" style={{ color: c.textMuted }}>{a.percentage}%</span>
+                            <div key={a.protocol} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                <div style={{
+                                    width: '8px',
+                                    height: '8px',
+                                    borderRadius: '50%',
+                                    background: a.color
+                                }} />
+                                <span style={{ color: c.text, fontSize: '14px', flex: 1 }}>{a.protocol}</span>
+                                <span style={{ color: c.textMuted, fontSize: '14px' }}>{a.percentage}%</span>
                             </div>
                         ))}
                     </div>
@@ -450,7 +546,7 @@ export default function Home() {
             </div>
 
             {/* Footer */}
-            <footer className="px-6 py-5 text-center border-t" style={{ borderColor: c.cardBorder }}>
+            <footer style={{ padding: '20px 24px', textAlign: 'center', borderTop: `1px solid ${c.cardBorder}` }}>
                 {/* Access Links Bar */}
                 <AccessLinks
                     theme={theme}
@@ -459,14 +555,28 @@ export default function Home() {
                     onTreasuryClick={() => setShowTreasury(true)}
                 />
 
-                <div className="mt-6 flex justify-center items-center gap-3" style={{ color: c.textLight }}>
-                    <div
-                        className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm"
-                        style={{ background: c.accent }}
-                    >
+                <div style={{
+                    marginTop: '24px',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    gap: '12px',
+                    color: c.textLight
+                }}>
+                    <div style={{
+                        background: c.accent,
+                        width: '32px',
+                        height: '32px',
+                        borderRadius: '50%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: 'white',
+                        fontSize: '14px'
+                    }}>
                         ✉️
                     </div>
-                    <p className="text-sm font-medium">
+                    <p style={{ fontSize: '14px', fontWeight: '500' }}>
                         2026 © Jubilee Protocol · Governed by Hundredfold Foundation
                     </p>
                 </div>
