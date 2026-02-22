@@ -3,6 +3,7 @@
 [![Built on Solana](https://img.shields.io/badge/Built%20on-Solana-9945FF)](https://solana.com)
 [![Powered by Anchor](https://img.shields.io/badge/Powered%20by-Anchor%200.29-blue)](https://anchor-lang.com)
 [![Status](https://img.shields.io/badge/Status-Live%20on%20Devnet-green)](https://github.com/Jubilee-Protocol/jSOLi)
+[![Donate Crypto](https://img.shields.io/badge/Donate-Crypto-f7931a?logo=bitcoin&logoColor=white)](https://commerce.coinbase.com/checkout/122a2979-e559-44b9-bb9d-2ff0c6a3025b)
 
 > A passive, diversified liquid staking strategy that automatically rebalances across Solana's top LST protocols while optimizing for APY.
 
